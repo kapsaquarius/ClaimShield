@@ -1,236 +1,1339 @@
 {
-    "16803": {
-        "Mount Nittany Medical Center": {
-            "Dr. Anjali Patel": [
+    "15213": {
+        "UPMC Presbyterian": {
+            "Dr. Elena Rosetti": [
                 {
-                    "cpt_code": "99283",
-                    "error_type": null,
-                    "reason": null,
-                    "evidence_quote": "Patient presents with moderate flu symptoms. Vitals stable.",
-                    "suggested_code": null,
-                    "suggested_code_explanation": null,
-                    "charged_amount": 450.00,
-                    "medicare_rate": 78.00,
-                    "gouging_multiple": 5.77
-                },
-                {
-                    "cpt_code": "73610",
-                    "error_type": null,
-                    "reason": null,
-                    "evidence_quote": "Ankle X-Ray 3 views complete. No fracture seen.",
-                    "suggested_code": null,
-                    "suggested_code_explanation": null,
-                    "charged_amount": 180.00,
-                    "medicare_rate": 35.00,
-                    "gouging_multiple": 5.14
-                },
-                {
-                    "cpt_code": "96372",
-                    "error_type": null,
-                    "reason": null,
-                    "evidence_quote": "Administered 30mg Toradol IM for pain relief.",
-                    "suggested_code": null,
-                    "suggested_code_explanation": null,
-                    "charged_amount": 125.00,
-                    "medicare_rate": 20.00,
-                    "gouging_multiple": 6.25
-                },
-                {
-                    "cpt_code": "99284",
-                    "error_type": null,
-                    "reason": null,
-                    "evidence_quote": "Patient with severe abdominal pain, requires CT scan and detailed workup.",
-                    "suggested_code": null,
-                    "suggested_code_explanation": null,
-                    "charged_amount": 950.00,
-                    "medicare_rate": 125.00,
-                    "gouging_multiple": 7.60
-                },
-                {
-                    "cpt_code": "99283",
-                    "error_type": "DOWNCODING",
-                    "reason": "Documentation supports a higher level of care than billed.",
-                    "evidence_quote": "Complex laceration repair and concussion protocol required.",
-                    "suggested_code": "99284",
-                    "suggested_code_explanation": "Medical Decision Making was of moderate-high complexity.",
-                    "charged_amount": 450.00,
-                    "medicare_rate": 78.00,
-                    "gouging_multiple": 5.77
-                }
-            ],
-            "Dr. Marcus Thorne": [
-                {
-                    "cpt_code": "99285",
+                    "cpt_code": "99291",
                     "error_type": "UPCODING",
-                    "reason": "High severity code billed for minor condition.",
-                    "evidence_quote": "Patient complains of stubbed toe. Vitals stable. Pain 2/10.",
-                    "suggested_code": "99282",
-                    "suggested_code_explanation": "Low complexity decision making required.",
-                    "charged_amount": 1850.00,
-                    "medicare_rate": 180.00,
-                    "gouging_multiple": 10.28
+                    "reason": "Critical care time requirement not met.",
+                    "evidence_quote": "Total critical care time documented: 15 minutes.",
+                    "suggested_code": "99285",
+                    "suggested_code_explanation": "Critical care requires minimum 30 minutes; default to high-level ED visit.",
+                    "charged_amount": 1450.00,
+                    "medicare_rate": 220.00,
+                    "gouging_multiple": 6.59
                 },
                 {
-                    "cpt_code": "99285",
-                    "error_type": "UPCODING",
-                    "reason": "High severity code billed for stable patient.",
-                    "evidence_quote": "Medication refill request. No acute distress.",
-                    "suggested_code": "99281",
-                    "suggested_code_explanation": "Visit was primarily nursing in nature.",
-                    "charged_amount": 1850.00,
-                    "medicare_rate": 180.00,
-                    "gouging_multiple": 10.28
-                },
-                {
-                    "cpt_code": "96372",
-                    "error_type": "DISCREPANCY",
-                    "reason": "Therapeutic injection billed but no drug administration recorded.",
-                    "evidence_quote": "Prescription written for oral Ibuprofen.",
+                    "cpt_code": "70450",
+                    "error_type": "PHANTOM CHARGES",
+                    "reason": "Service billed but not documented in patient chart.",
+                    "evidence_quote": "Chart indicates CT Head was ordered but cancelled by patient.",
                     "suggested_code": null,
                     "suggested_code_explanation": "Service not performed.",
-                    "charged_amount": 250.00,
-                    "medicare_rate": 20.00,
-                    "gouging_multiple": 12.50
+                    "charged_amount": 1200.00,
+                    "medicare_rate": 95.00,
+                    "gouging_multiple": 12.63
                 },
                 {
-                    "cpt_code": "99284",
+                    "cpt_code": "99283",
                     "error_type": null,
                     "reason": null,
-                    "evidence_quote": "Patient with chest pain, cardiac workup negative.",
+                    "evidence_quote": "Patient presented with acute otitis media. Antibiotics prescribed.",
                     "suggested_code": null,
                     "suggested_code_explanation": null,
-                    "charged_amount": 950.00,
-                    "medicare_rate": 125.00,
-                    "gouging_multiple": 7.60
-                },
-                {
-                    "cpt_code": "99285",
-                    "error_type": "UPCODING",
-                    "reason": "Detailed history not comprehensive enough for Level 5.",
-                    "evidence_quote": "History limited by patient refusal.",
-                    "suggested_code": "99283",
-                    "suggested_code_explanation": "Documentation limits code selection.",
-                    "charged_amount": 1850.00,
-                    "medicare_rate": 180.00,
-                    "gouging_multiple": 10.28
-                }
-            ]
-        },
-        "Penn Highlands Healthcare": {
-            "Dr. Sarah Jenkins": [
-                {
-                    "cpt_code": "27766",
-                    "error_type": null,
-                    "reason": null,
-                    "evidence_quote": "Open reduction internal fixation of medial malleolus.",
-                    "suggested_code": null,
-                    "suggested_code_explanation": null,
-                    "charged_amount": 4500.00,
-                    "medicare_rate": 650.00,
-                    "gouging_multiple": 6.92
+                    "charged_amount": 350.00,
+                    "medicare_rate": 78.00,
+                    "gouging_multiple": 4.49
                 },
                 {
                     "cpt_code": "12001",
                     "error_type": "UNBUNDLING",
-                    "reason": "Simple repair is included in the global surgical package of 27766.",
-                    "evidence_quote": "Skin closed with 4-0 nylon sutures.",
+                    "reason": "Simple closure billed separately from excision.",
+                    "evidence_quote": "Excision of 2cm lipoma with simple closure.",
                     "suggested_code": null,
-                    "suggested_code_explanation": "This service is bundled into CPT 27766.",
+                    "suggested_code_explanation": "Closure is included in excision code 11402.",
+                    "charged_amount": 400.00,
+                    "medicare_rate": 0.00,
+                    "gouging_multiple": "Infinity"
+                }
+            ],
+            "Dr. James Wilson": [
+                {
+                    "cpt_code": "99285",
+                    "error_type": "UPCODING",
+                    "reason": "History and exam do not support high complexity.",
+                    "evidence_quote": "Patient complains of minor sore throat. Rapid strep negative.",
+                    "suggested_code": "99282",
+                    "suggested_code_explanation": "Low complexity decision making.",
+                    "charged_amount": 1800.00,
+                    "medicare_rate": 180.00,
+                    "gouging_multiple": 10.00
+                },
+                {
+                    "cpt_code": "71046",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "CXR 2 views confirms pneumonia in right lower lobe.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 210.00,
+                    "medicare_rate": 40.00,
+                    "gouging_multiple": 5.25
+                },
+                {
+                    "cpt_code": "93010",
+                    "error_type": "PHANTOM CHARGES",
+                    "reason": "Duplicate billing for same service.",
+                    "evidence_quote": "EKG interpretation already billed by Cardiology team.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Service duplicated.",
+                    "charged_amount": 150.00,
+                    "medicare_rate": 15.00,
+                    "gouging_multiple": 10.00
+                },
+                {
+                    "cpt_code": "29125",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Application of short arm splint for wrist sprain.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 300.00,
+                    "medicare_rate": 55.00,
+                    "gouging_multiple": 5.45
+                }
+            ],
+            "Dr. Sarah Chen": [
+                {
+                    "cpt_code": "99284",
+                    "error_type": "UPCODING",
+                    "reason": "Mismatched MDM level.",
+                    "evidence_quote": "Stable UTI, discharged with oral antibiotics.",
+                    "suggested_code": "99283",
+                    "suggested_code_explanation": "Moderate complexity not supported for simple UTI.",
+                    "charged_amount": 950.00,
+                    "medicare_rate": 78.00,
+                    "gouging_multiple": 12.18
+                },
+                {
+                    "cpt_code": "80053",
+                    "error_type": "UNBUNDLING",
+                    "reason": "Panel components billed individually.",
+                    "evidence_quote": "Comprehensive metabolic panel billed as individual assays.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Should be billed as single panel.",
+                    "charged_amount": 600.00,
+                    "medicare_rate": 12.00,
+                    "gouging_multiple": 50.00
+                },
+                {
+                    "cpt_code": "96372",
+                    "error_type": "PHANTOM CHARGES",
+                    "reason": "No medication administration record found.",
+                    "evidence_quote": "Chart review shows no injections given.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Service not performed.",
+                    "charged_amount": 200.00,
+                    "medicare_rate": 20.00,
+                    "gouging_multiple": 10.00
+                },
+                {
+                    "cpt_code": "99291",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "35 minutes of critical care for septic shock management.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 550.00,
+                    "medicare_rate": 220.00,
+                    "gouging_multiple": 2.50
+                }
+            ],
+            "Dr. Mark Robinson": [
+                {
+                    "cpt_code": "73030",
+                    "error_type": "UPCODING",
+                    "reason": "Billed for complete shoulder x-ray, only 1 view taken.",
+                    "evidence_quote": "Single AP view of shoulder obtained.",
+                    "suggested_code": "73020",
+                    "suggested_code_explanation": "Radiologic exam, shoulder; 1 view.",
+                    "charged_amount": 250.00,
+                    "medicare_rate": 25.00,
+                    "gouging_multiple": 10.00
+                },
+                {
+                    "cpt_code": "99285",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Patient with severe chest pain, diaphoresis, history of MI. Full cardiac workup.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 420.00,
+                    "medicare_rate": 180.00,
+                    "gouging_multiple": 2.33
+                },
+                {
+                    "cpt_code": "10061",
+                    "error_type": "UPCODING",
+                    "reason": "Procedure was simple, not complex.",
+                    "evidence_quote": "Simple I&D of small abscess, no packing required.",
+                    "suggested_code": "10060",
+                    "suggested_code_explanation": "Incision and drainage of abscess; simple.",
+                    "charged_amount": 800.00,
+                    "medicare_rate": 100.00,
+                    "gouging_multiple": 8.00
+                },
+                {
+                    "cpt_code": "99283",
+                    "error_type": "PHANTOM CHARGES",
+                    "reason": "Patient left without being seen.",
+                    "evidence_quote": "Triage note only. Patient LWBS before provider evaluation.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "No professional service rendered.",
+                    "charged_amount": 400.00,
+                    "medicare_rate": 0.00,
+                    "gouging_multiple": "Infinity"
+                }
+            ]
+        },
+        "West Penn Hospital": {
+            "Dr. Emily Blunt": [
+                {
+                    "cpt_code": "99284",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Abdominal pain, CT performed, IV fluids administered.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 800.00,
+                    "medicare_rate": 125.00,
+                    "gouging_multiple": 6.40
+                },
+                {
+                    "cpt_code": "29580",
+                    "error_type": "UNBUNDLING",
+                    "reason": "Unna boot billed with wound care code.",
+                    "evidence_quote": "Applied Unna boot as part of wound care service.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Bundled with 97597.",
                     "charged_amount": 350.00,
                     "medicare_rate": 0.00,
                     "gouging_multiple": "Infinity"
                 },
                 {
-                    "cpt_code": "11042",
-                    "error_type": "UNBUNDLING",
-                    "reason": "Debridement at the site of open fracture repair is bundled.",
-                    "evidence_quote": "Minimal debridement of skin edges performed prior to closure.",
-                    "suggested_code": null,
-                    "suggested_code_explanation": "Bundled into primary procedure.",
-                    "charged_amount": 275.00,
-                    "medicare_rate": 0.00,
-                    "gouging_multiple": "Infinity"
-                },
-                {
-                    "cpt_code": "99284",
-                    "error_type": null,
-                    "reason": null,
-                    "evidence_quote": "Pre-operative evaluation detailed.",
-                    "suggested_code": null,
-                    "suggested_code_explanation": null,
-                    "charged_amount": 950.00,
-                    "medicare_rate": 125.00,
-                    "gouging_multiple": 7.60
-                },
-                {
-                    "cpt_code": "73610",
-                    "error_type": "DISCREPANCY",
-                    "reason": "Only 2 views documented, but 3 view code billed.",
-                    "evidence_quote": "AP and Lateral views of ankle obtained.",
-                    "suggested_code": "73600",
-                    "suggested_code_explanation": "Radiologic examination, ankle; 2 views.",
-                    "charged_amount": 180.00,
-                    "medicare_rate": 30.00,
-                    "gouging_multiple": 6.00
-                }
-            ]
-        },
-        "Geisinger Clinic": {
-            "Dr. David Lee": [
-                {
                     "cpt_code": "99285",
-                    "error_type": null,
-                    "reason": null,
-                    "evidence_quote": "Patient in anaphylactic shock. Epinephrine administered immediately.",
-                    "suggested_code": null,
-                    "suggested_code_explanation": null,
+                    "error_type": "UPCODING",
+                    "reason": "Acuity overstated.",
+                    "evidence_quote": "Medication refill for hypertension. Asymptomatic.",
+                    "suggested_code": "99282",
+                    "suggested_code_explanation": "Low complexity.",
                     "charged_amount": 1900.00,
                     "medicare_rate": 180.00,
                     "gouging_multiple": 10.55
                 },
                 {
-                    "cpt_code": "96372",
-                    "error_type": "DISCREPANCY",
-                    "reason": "Documentation indicates oral administration.",
-                    "evidence_quote": "Tylenol given PO.",
+                    "cpt_code": "87086",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Urine culture performed for suspected pyelonephritis.",
                     "suggested_code": null,
-                    "suggested_code_explanation": "Oral meds are generally not separately billable in ED.",
+                    "suggested_code_explanation": null,
+                    "charged_amount": 60.00,
+                    "medicare_rate": 10.00,
+                    "gouging_multiple": 6.00
+                }
+            ],
+            "Dr. Alan Grant": [
+                {
+                    "cpt_code": "99285",
+                    "error_type": "UPCODING",
+                    "reason": "Inflated review of systems.",
+                    "evidence_quote": "10 systems reviewed marked, but only 2 documented in notes.",
+                    "suggested_code": "99283",
+                    "suggested_code_explanation": "Documentation supports lower level.",
+                    "charged_amount": 1750.00,
+                    "medicare_rate": 180.00,
+                    "gouging_multiple": 9.72
+                },
+                {
+                    "cpt_code": "72125",
+                    "error_type": "PHANTOM CHARGES",
+                    "reason": "Incorrect body part billed.",
+                    "evidence_quote": "Report describes CT Lumbar, bill is for CT Cervical.",
+                    "suggested_code": "72131",
+                    "suggested_code_explanation": "CT Lumbar Spine.",
+                    "charged_amount": 1400.00,
+                    "medicare_rate": 100.00,
+                    "gouging_multiple": 14.00
+                },
+                {
+                    "cpt_code": "99282",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Suture removal from outside facility. uncomplicated.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 200.00,
+                    "medicare_rate": 50.00,
+                    "gouging_multiple": 4.00
+                }
+            ],
+            "Dr. Lisa Cuddy": [
+                {
+                    "cpt_code": "96360",
+                    "error_type": "UNBUNDLING",
+                    "reason": "Hydration billed with chemotherapy.",
+                    "evidence_quote": "IV hydration concurrent with chemo infusion.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Bundled service.",
+                    "charged_amount": 400.00,
+                    "medicare_rate": 0.00,
+                    "gouging_multiple": "Infinity"
+                },
+                {
+                    "cpt_code": "99283",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Evaluation of closed finger fracture, referred to ortho.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 450.00,
+                    "medicare_rate": 78.00,
+                    "gouging_multiple": 5.77
+                },
+                {
+                    "cpt_code": "70450",
+                    "error_type": "PHANTOM CHARGES",
+                    "reason": "Scan not performed.",
+                    "evidence_quote": "Patient refused CT due to radiation concerns.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Service declined.",
+                    "charged_amount": 1100.00,
+                    "medicare_rate": 95.00,
+                    "gouging_multiple": 11.58
+                }
+            ],
+            "Dr. Gregory House": [
+                {
+                    "cpt_code": "99291",
+                    "error_type": "UPCODING",
+                    "reason": "Patient stable, no critical care.",
+                    "evidence_quote": "Vitals stable, talking in full sentences. Diagnosed with Lupus.",
+                    "suggested_code": "99285",
+                    "suggested_code_explanation": "High complexity but not critical care.",
+                    "charged_amount": 2500.00,
+                    "medicare_rate": 220.00,
+                    "gouging_multiple": 11.36
+                },
+                {
+                    "cpt_code": "36415",
+                    "error_type": "UNBUNDLING",
+                    "reason": "Venipuncture routine with IV start.",
+                    "evidence_quote": "Labs drawn from IV start site.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Bundled with IV start.",
+                    "charged_amount": 50.00,
+                    "medicare_rate": 0.00,
+                    "gouging_multiple": "Infinity"
+                },
+                {
+                    "cpt_code": "99285",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Acute MI, cath lab activated. Complex management.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 500.00,
+                    "medicare_rate": 180.00,
+                    "gouging_multiple": 2.77
+                }
+            ]
+        },
+        "Magee-Womens Hospital": {
+            "Dr. Addison Montgomery": [
+                {
+                    "cpt_code": "59400",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Routine vaginal delivery, no complications.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 5000.00,
+                    "medicare_rate": 2200.00,
+                    "gouging_multiple": 2.27
+                },
+                {
+                    "cpt_code": "76805",
+                    "error_type": "UPCODING",
+                    "reason": "Follow up ultrasound billed as complete.",
+                    "evidence_quote": "Limited view to check fetal heart rate.",
+                    "suggested_code": "76815",
+                    "suggested_code_explanation": "Ultrasound, pregnant uterus, limited.",
+                    "charged_amount": 800.00,
+                    "medicare_rate": 150.00,
+                    "gouging_multiple": 5.33
+                },
+                {
+                    "cpt_code": "99223",
+                    "error_type": "UPCODING",
+                    "reason": "Initial care billed for subsequent day.",
+                    "evidence_quote": "Day 2 of admission.",
+                    "suggested_code": "99232",
+                    "suggested_code_explanation": "Subsequent hospital care.",
+                    "charged_amount": 600.00,
+                    "medicare_rate": 100.00,
+                    "gouging_multiple": 6.00
+                }
+            ],
+            "Dr. Arizona Robbins": [
+                {
+                    "cpt_code": "99283",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Pediatric fever, viral origin suspected.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 300.00,
+                    "medicare_rate": 78.00,
+                    "gouging_multiple": 3.84
+                },
+                {
+                    "cpt_code": "54150",
+                    "error_type": "PHANTOM CHARGES",
+                    "reason": "Procedure cancelled.",
+                    "evidence_quote": "Circumcision scheduled but parents opted out last minute.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Service not performed.",
+                    "charged_amount": 400.00,
+                    "medicare_rate": 150.00,
+                    "gouging_multiple": 2.66
+                },
+                {
+                    "cpt_code": "96372",
+                    "error_type": "UNBUNDLING",
+                    "reason": "Vaccine admin billed with E/M inappropriately.",
+                    "evidence_quote": "Nurse visit only for vaccine.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Should bill admin code only, no E/M.",
                     "charged_amount": 150.00,
                     "medicare_rate": 20.00,
+                    "gouging_multiple": 7.50
+                }
+            ],
+            "Dr. Alex Karev": [
+                {
+                    "cpt_code": "99284",
+                    "error_type": "UPCODING",
+                    "reason": "Moderate complexity billed for minor injury.",
+                    "evidence_quote": "Small abrasion on knee, cleaned and bandaged.",
+                    "suggested_code": "99282",
+                    "suggested_code_explanation": "Low complexity.",
+                    "charged_amount": 1200.00,
+                    "medicare_rate": 78.00,
+                    "gouging_multiple": 15.38
+                },
+                {
+                    "cpt_code": "99285",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Seizure activity, lorazepam administered, neurology consult.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 550.00,
+                    "medicare_rate": 180.00,
+                    "gouging_multiple": 3.05
+                },
+                {
+                    "cpt_code": "12011",
+                    "error_type": "UPCODING",
+                    "reason": "Simple repair billed as intermediate.",
+                    "evidence_quote": "Single layer closure of face laceration.",
+                    "suggested_code": "12001",
+                    "suggested_code_explanation": "Simple repair of superficial wounds.",
+                    "charged_amount": 600.00,
+                    "medicare_rate": 150.00,
+                    "gouging_multiple": 4.00
+                }
+            ],
+            "Dr. Miranda Bailey": [
+                {
+                    "cpt_code": "49000",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Exploratory laparotomy for acute abdomen.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 2500.00,
+                    "medicare_rate": 800.00,
+                    "gouging_multiple": 3.12
+                },
+                {
+                    "cpt_code": "44970",
+                    "error_type": "UNBUNDLING",
+                    "reason": "Lysis of adhesions billed with lap appendectomy.",
+                    "evidence_quote": " adhesions lysed to access appendix.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Bundled into primary procedure.",
+                    "charged_amount": 900.00,
+                    "medicare_rate": 0.00,
+                    "gouging_multiple": "Infinity"
+                },
+                {
+                    "cpt_code": "99291",
+                    "error_type": "PHANTOM CHARGES",
+                    "reason": "Physician not present.",
+                    "evidence_quote": "Critical care provided by resident only.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Attending presence required for billing.",
+                    "charged_amount": 1500.00,
+                    "medicare_rate": 0.00,
+                    "gouging_multiple": "Infinity"
+                }
+            ]
+        }
+    },
+    "19104": {
+        "HUP (Penn Medicine)": {
+            "Dr. Conrad Hawkins": [
+                {
+                    "cpt_code": "99285",
+                    "error_type": "UPCODING",
+                    "reason": "Patient stable, observation only.",
+                    "evidence_quote": "Monitoring for reaction, none observed. Discharged.",
+                    "suggested_code": "99283",
+                    "suggested_code_explanation": "Evaluation and management, moderate.",
+                    "charged_amount": 2000.00,
+                    "medicare_rate": 180.00,
+                    "gouging_multiple": 11.11
+                },
+                {
+                    "cpt_code": "93000",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "12-lead EKG performed for palpitations.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 120.00,
+                    "medicare_rate": 15.00,
+                    "gouging_multiple": 8.00
+                },
+                {
+                    "cpt_code": "31500",
+                    "error_type": "PHANTOM CHARGES",
+                    "reason": "Intubation kit opened but not used.",
+                    "evidence_quote": "Airway managed with Bag-Valve-Mask only.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Procedure not performed.",
+                    "charged_amount": 800.00,
+                    "medicare_rate": 150.00,
+                    "gouging_multiple": 5.33
+                }
+            ],
+            "Dr. Nico Kim": [
+                {
+                    "cpt_code": "20610",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Arthrocentesis of major joint (knee).",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 350.00,
+                    "medicare_rate": 60.00,
+                    "gouging_multiple": 5.83
+                },
+                {
+                    "cpt_code": "73721",
+                    "error_type": "UPCODING",
+                    "reason": "MRI with contrast billed, no contrast used.",
+                    "evidence_quote": "MRI Knee without contrast performed.",
+                    "suggested_code": "73720",
+                    "suggested_code_explanation": "MRI Joint Lower Extremity w/o contrast.",
+                    "charged_amount": 2200.00,
+                    "medicare_rate": 300.00,
+                    "gouging_multiple": 7.33
+                },
+                {
+                    "cpt_code": "99284",
+                    "error_type": "UNBUNDLING",
+                    "reason": "Fracture care includes E/M.",
+                    "evidence_quote": "E/M billed in addition to fracture reduction.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "E/M bundled in global period.",
+                    "charged_amount": 850.00,
+                    "medicare_rate": 0.00,
+                    "gouging_multiple": "Infinity"
+                }
+            ],
+            "Dr. Mina Okafor": [
+                {
+                    "cpt_code": "47562",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Laparoscopic cholecystectomy for gallstones.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 4000.00,
+                    "medicare_rate": 650.00,
+                    "gouging_multiple": 6.15
+                },
+                {
+                    "cpt_code": "47000",
+                    "error_type": "UNBUNDLING",
+                    "reason": "Liver biopsy bundled with major surgery.",
+                    "evidence_quote": "Biopsy taken during cholecystectomy.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Bundled service.",
+                    "charged_amount": 600.00,
+                    "medicare_rate": 0.00,
+                    "gouging_multiple": "Infinity"
+                },
+                {
+                    "cpt_code": "99291",
+                    "error_type": "PHANTOM CHARGES",
+                    "reason": "Wrong patient.",
+                    "evidence_quote": "Critical care note belongs to roommate.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Service billed to wrong account.",
+                    "charged_amount": 1800.00,
+                    "medicare_rate": 0.00,
+                    "gouging_multiple": "Infinity"
+                }
+            ],
+            "Dr. Randolph Bell": [
+                {
+                    "cpt_code": "99285",
+                    "error_type": "UPCODING",
+                    "reason": "Visit complexity low.",
+                    "evidence_quote": "Patient requesting work note for back pain. Stable.",
+                    "suggested_code": "99282",
+                    "suggested_code_explanation": "Low complexity.",
+                    "charged_amount": 1600.00,
+                    "medicare_rate": 180.00,
+                    "gouging_multiple": 8.88
+                },
+                {
+                    "cpt_code": "44950",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Appendectomy for acute appendicitis.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 3000.00,
+                    "medicare_rate": 450.00,
+                    "gouging_multiple": 6.66
+                },
+                {
+                    "cpt_code": "99233",
+                    "error_type": "UPCODING",
+                    "reason": "Patient improving, lower level care needed.",
+                    "evidence_quote": "Patient ready for discharge.",
+                    "suggested_code": "99231",
+                    "suggested_code_explanation": "Subsequent hospital care, stable.",
+                    "charged_amount": 500.00,
+                    "medicare_rate": 70.00,
+                    "gouging_multiple": 7.14
+                }
+            ]
+        },
+        "CHOP (Childrens)": {
+            "Dr. Doug Ross": [
+                {
+                    "cpt_code": "99284",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Asthma exacerbation, nebulizers given.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 650.00,
+                    "medicare_rate": 125.00,
+                    "gouging_multiple": 5.20
+                },
+                {
+                    "cpt_code": "71046",
+                    "error_type": "UPCODING",
+                    "reason": "1 view chest xray billed as 2.",
+                    "evidence_quote": "Single frontal view obtained.",
+                    "suggested_code": "71045",
+                    "suggested_code_explanation": "CXR 1 view.",
+                    "charged_amount": 300.00,
+                    "medicare_rate": 25.00,
+                    "gouging_multiple": 12.00
+                },
+                {
+                    "cpt_code": "99291",
+                    "error_type": "PHANTOM CHARGES",
+                    "reason": "No critical care documented.",
+                    "evidence_quote": "Routine check up.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Code requires immediate life saving intervention.",
+                    "charged_amount": 1200.00,
+                    "medicare_rate": 220.00,
+                    "gouging_multiple": 5.45
+                }
+            ],
+            "Dr. John Carter": [
+                {
+                    "cpt_code": "12032",
+                    "error_type": "UPCODING",
+                    "reason": "Layered closure billed, only simple glue used.",
+                    "evidence_quote": "Wound approximated with Dermabond.",
+                    "suggested_code": "12002",
+                    "suggested_code_explanation": "Simple repair.",
+                    "charged_amount": 900.00,
+                    "medicare_rate": 100.00,
+                    "gouging_multiple": 9.00
+                },
+                {
+                    "cpt_code": "99283",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Evaluation of rash, allergic reaction suspected.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 320.00,
+                    "medicare_rate": 78.00,
+                    "gouging_multiple": 4.10
+                },
+                {
+                    "cpt_code": "96372",
+                    "error_type": "UNBUNDLING",
+                    "reason": "Injection billed separately from vaccine.",
+                    "evidence_quote": "Vaccine administration code includes injection.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Bundled.",
+                    "charged_amount": 100.00,
+                    "medicare_rate": 0.00,
+                    "gouging_multiple": "Infinity"
+                }
+            ],
+            "Dr. Kerry Weaver": [
+                {
+                    "cpt_code": "27130",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Total hip arthroplasty.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 6000.00,
+                    "medicare_rate": 1200.00,
+                    "gouging_multiple": 5.00
+                },
+                {
+                    "cpt_code": "99223",
+                    "error_type": "UPCODING",
+                    "reason": "Documentation scant for high level admission.",
+                    "evidence_quote": "Elective admission for surgery.",
+                    "suggested_code": "99221",
+                    "suggested_code_explanation": "Initial hospital care, low complexity.",
+                    "charged_amount": 800.00,
+                    "medicare_rate": 100.00,
+                    "gouging_multiple": 8.00
+                },
+                {
+                    "cpt_code": "73502",
+                    "error_type": "PHANTOM CHARGES",
+                    "reason": "Xray not found in PACS.",
+                    "evidence_quote": "No images available for this date.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Service not performed.",
+                    "charged_amount": 350.00,
+                    "medicare_rate": 40.00,
+                    "gouging_multiple": 8.75
+                }
+            ],
+            "Dr. Peter Benton": [
+                {
+                    "cpt_code": "44970",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Laparoscopic appendectomy.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 2800.00,
+                    "medicare_rate": 450.00,
+                    "gouging_multiple": 6.22
+                },
+                {
+                    "cpt_code": "99285",
+                    "error_type": "UPCODING",
+                    "reason": "Level 5 billed for constipation.",
+                    "evidence_quote": "Abdominal pain, relieved by enema.",
+                    "suggested_code": "99283",
+                    "suggested_code_explanation": "Moderate complexity.",
+                    "charged_amount": 1500.00,
+                    "medicare_rate": 180.00,
+                    "gouging_multiple": 8.33
+                },
+                {
+                    "cpt_code": "36415",
+                    "error_type": "UNBUNDLING",
+                    "reason": "Lab draw billed twice.",
+                    "evidence_quote": "Duplicate charge for same blood draw.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Duplicate.",
+                    "charged_amount": 50.00,
+                    "medicare_rate": 0.00,
+                    "gouging_multiple": "Infinity"
+                }
+            ]
+        },
+        "Presbyterian Medical Center": {
+            "Dr. Cristina Yang": [
+                {
+                    "cpt_code": "33405",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Aortic valve replacement.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 12000.00,
+                    "medicare_rate": 2500.00,
+                    "gouging_multiple": 4.80
+                },
+                {
+                    "cpt_code": "33206",
+                    "error_type": "UPCODING",
+                    "reason": "Permanent pacemaker billed, temporary inserted.",
+                    "evidence_quote": "Temporary transvenous pacer placed.",
+                    "suggested_code": "33210",
+                    "suggested_code_explanation": "Insertion of temporary pacemaker.",
+                    "charged_amount": 5000.00,
+                    "medicare_rate": 400.00,
+                    "gouging_multiple": 12.50
+                },
+                {
+                    "cpt_code": "93010",
+                    "error_type": "UNBUNDLING",
+                    "reason": "EKG interpretation bundled in critical care.",
+                    "evidence_quote": "Billed alongside 99291 without modifier.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Bundled.",
+                    "charged_amount": 150.00,
+                    "medicare_rate": 0.00,
+                    "gouging_multiple": "Infinity"
+                }
+            ],
+            "Dr. Meredith Grey": [
+                {
+                    "cpt_code": "99285",
+                    "error_type": "UPCODING",
+                    "reason": "Physical exam elements missing.",
+                    "evidence_quote": "Only 3 body areas examined.",
+                    "suggested_code": "99283",
+                    "suggested_code_explanation": "Requirements for Level 5 not met.",
+                    "charged_amount": 1650.00,
+                    "medicare_rate": 180.00,
+                    "gouging_multiple": 9.16
+                },
+                {
+                    "cpt_code": "44140",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Colectomy, partial; with anastomosis.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 4500.00,
+                    "medicare_rate": 1100.00,
+                    "gouging_multiple": 4.09
+                },
+                {
+                    "cpt_code": "99238",
+                    "error_type": "PHANTOM CHARGES",
+                    "reason": "Discharge management billed, patient transferred.",
+                    "evidence_quote": "Patient transferred to ICU, not discharged.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Service not applicable.",
+                    "charged_amount": 400.00,
+                    "medicare_rate": 80.00,
+                    "gouging_multiple": 5.00
+                }
+            ],
+            "Dr. Derek Shepherd": [
+                {
+                    "cpt_code": "61510",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Craniectomy for tumor excision.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 15000.00,
+                    "medicare_rate": 3000.00,
+                    "gouging_multiple": 5.00
+                },
+                {
+                    "cpt_code": "99291",
+                    "error_type": "UPCODING",
+                    "reason": "Consultation billed as critical care.",
+                    "evidence_quote": "Neuro consult for headache, patient stable.",
+                    "suggested_code": "99254",
+                    "suggested_code_explanation": "Inpatient consultation.",
+                    "charged_amount": 1800.00,
+                    "medicare_rate": 220.00,
+                    "gouging_multiple": 8.18
+                },
+                {
+                    "cpt_code": "70450",
+                    "error_type": "UNBUNDLING",
+                    "reason": "CT Head billed separately during surgery.",
+                    "evidence_quote": "Intraoperative stealth scan.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Bundled in navigation code.",
+                    "charged_amount": 1000.00,
+                    "medicare_rate": 0.00,
+                    "gouging_multiple": "Infinity"
+                }
+            ],
+            "Dr. Mark Sloan": [
+                {
+                    "cpt_code": "14040",
+                    "error_type": "UPCODING",
+                    "reason": "Adjacent tissue transfer billed for simple graft.",
+                    "evidence_quote": "Split thickness skin graft applied.",
+                    "suggested_code": "15120",
+                    "suggested_code_explanation": "Split-thickness autograft.",
+                    "charged_amount": 3000.00,
+                    "medicare_rate": 400.00,
+                    "gouging_multiple": 7.50
+                },
+                {
+                    "cpt_code": "11400",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Excision of benign lesion.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 400.00,
+                    "medicare_rate": 80.00,
+                    "gouging_multiple": 5.00
+                },
+                {
+                    "cpt_code": "99283",
+                    "error_type": "PHANTOM CHARGES",
+                    "reason": "Follow up visit billed, patient cancelled.",
+                    "evidence_quote": "Appointment marked as No Show.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "No service.",
+                    "charged_amount": 250.00,
+                    "medicare_rate": 78.00,
+                    "gouging_multiple": 3.20
+                }
+            ]
+        }
+    },
+    "16801": {
+        "Mount Nittany Medical Center": {
+            "Dr. Stephen Strange": [
+                {
+                    "cpt_code": "99285",
+                    "error_type": "UPCODING",
+                    "reason": "Trauma activation billed for minor fall.",
+                    "evidence_quote": "Ground level fall, no LOC, wrist pain.",
+                    "suggested_code": "99283",
+                    "suggested_code_explanation": "Moderate complexity.",
+                    "charged_amount": 2800.00,
+                    "medicare_rate": 180.00,
+                    "gouging_multiple": 15.55
+                },
+                {
+                    "cpt_code": "25600",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Closed treatment of distal radial fracture.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 800.00,
+                    "medicare_rate": 180.00,
+                    "gouging_multiple": 4.44
+                },
+                {
+                    "cpt_code": "73090",
+                    "error_type": "PHANTOM CHARGES",
+                    "reason": "Forearm xray billed, only wrist xray taken.",
+                    "evidence_quote": "Wrist films only.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Service not performed.",
+                    "charged_amount": 200.00,
+                    "medicare_rate": 30.00,
+                    "gouging_multiple": 6.66
+                }
+            ],
+            "Dr. Leonard McCoy": [
+                {
+                    "cpt_code": "99284",
+                    "error_type": "UPCODING",
+                    "reason": "High complexity billed for viral URI.",
+                    "evidence_quote": "Cough and congestion. Vitals stable.",
+                    "suggested_code": "99282",
+                    "suggested_code_explanation": "Low complexity.",
+                    "charged_amount": 950.00,
+                    "medicare_rate": 78.00,
+                    "gouging_multiple": 12.18
+                },
+                {
+                    "cpt_code": "81000",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Urinalysis dipstick + microscopy.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 50.00,
+                    "medicare_rate": 12.00,
+                    "gouging_multiple": 4.16
+                },
+                {
+                    "cpt_code": "96374",
+                    "error_type": "UNBUNDLING",
+                    "reason": "IV push billed with infusion.",
+                    "evidence_quote": "Drug administered via running IV.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Bundled.",
+                    "charged_amount": 180.00,
+                    "medicare_rate": 0.00,
+                    "gouging_multiple": "Infinity"
+                }
+            ],
+            "Dr. Beverly Crusher": [
+                {
+                    "cpt_code": "10160",
+                    "error_type": "UPCODING",
+                    "reason": "Aspiration of abscess billed as I&D.",
+                    "evidence_quote": "Needle aspiration of fluid collection.",
+                    "suggested_code": "10160",
+                    "suggested_code_explanation": "Correct code is lower value.",
+                    "charged_amount": 600.00,
+                    "medicare_rate": 80.00,
                     "gouging_multiple": 7.50
                 },
                 {
                     "cpt_code": "99283",
                     "error_type": null,
                     "reason": null,
-                    "evidence_quote": "Evaluation of sprained wrist.",
+                    "evidence_quote": "Migraine headache, treated with IM Toradol.",
                     "suggested_code": null,
                     "suggested_code_explanation": null,
-                    "charged_amount": 500.00,
+                    "charged_amount": 350.00,
                     "medicare_rate": 78.00,
-                    "gouging_multiple": 6.41
+                    "gouging_multiple": 4.49
                 },
                 {
-                    "cpt_code": "93010",
-                    "error_type": "UNBUNDLING",
-                    "reason": "EKG interpretation often bundled if not clearly distinct.",
-                    "evidence_quote": "EKG strip reviewed.",
+                    "cpt_code": "99291",
+                    "error_type": "PHANTOM CHARGES",
+                    "reason": "Critical care time not recorded.",
+                    "evidence_quote": "No time statement in note.",
                     "suggested_code": null,
-                    "suggested_code_explanation": "Requires distinct report to be billable.",
-                    "charged_amount": 100.00,
-                    "medicare_rate": 15.00,
+                    "suggested_code_explanation": "Time documentation mandatory.",
+                    "charged_amount": 1300.00,
+                    "medicare_rate": 220.00,
+                    "gouging_multiple": 5.90
+                }
+            ],
+            "Dr. Julian Bashir": [
+                {
+                    "cpt_code": "99285",
+                    "error_type": "UPCODING",
+                    "reason": "Level 5 billed for sprain.",
+                    "evidence_quote": "Ankle sprain, ace wrap applied.",
+                    "suggested_code": "99282",
+                    "suggested_code_explanation": "Low complexity.",
+                    "charged_amount": 1700.00,
+                    "medicare_rate": 180.00,
+                    "gouging_multiple": 9.44
+                },
+                {
+                    "cpt_code": "73630",
+                    "error_type": "UPCODING",
+                    "reason": "Complete foot xray billed, 2 views only.",
+                    "evidence_quote": "AP and Lateral foot.",
+                    "suggested_code": "73620",
+                    "suggested_code_explanation": "Radiologic exam, foot; 2 views.",
+                    "charged_amount": 250.00,
+                    "medicare_rate": 25.00,
+                    "gouging_multiple": 10.00
+                },
+                {
+                    "cpt_code": "12001",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Simple repair of 1.5cm scalp laceration.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 250.00,
+                    "medicare_rate": 80.00,
+                    "gouging_multiple": 3.12
+                }
+            ]
+        },
+        "Penn State Health": {
+            "Dr. Christopher Turk": [
+                {
+                    "cpt_code": "44960",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Appendectomy for ruptured appendix.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 3500.00,
+                    "medicare_rate": 600.00,
+                    "gouging_multiple": 5.83
+                },
+                {
+                    "cpt_code": "99285",
+                    "error_type": "UPCODING",
+                    "reason": "Severity of illness low.",
+                    "evidence_quote": "Suture removal.",
+                    "suggested_code": "99281",
+                    "suggested_code_explanation": "Lowest complexity.",
+                    "charged_amount": 1200.00,
+                    "medicare_rate": 180.00,
                     "gouging_multiple": 6.66
                 },
+                {
+                    "cpt_code": "76510",
+                    "error_type": "UNBUNDLING",
+                    "reason": "Ophthalmic ultrasound billed with eye exam.",
+                    "evidence_quote": "Part of standard exam.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Bundled.",
+                    "charged_amount": 300.00,
+                    "medicare_rate": 0.00,
+                    "gouging_multiple": "Infinity"
+                }
+            ],
+            "Dr. Elliot Reid": [
                 {
                     "cpt_code": "99284",
                     "error_type": null,
                     "reason": null,
-                    "evidence_quote": "Kidney stone confirmed on CT. Pain management initiated.",
+                    "evidence_quote": "New onset diabetes, hyperglycemia.",
                     "suggested_code": null,
                     "suggested_code_explanation": null,
-                    "charged_amount": 925.00,
+                    "charged_amount": 850.00,
                     "medicare_rate": 125.00,
-                    "gouging_multiple": 7.40
+                    "gouging_multiple": 6.80
+                },
+                {
+                    "cpt_code": "99291",
+                    "error_type": "UPCODING",
+                    "reason": "Rounding error on time.",
+                    "evidence_quote": "25 minutes spent.",
+                    "suggested_code": "99285",
+                    "suggested_code_explanation": "Critical care requires 30m.",
+                    "charged_amount": 1400.00,
+                    "medicare_rate": 220.00,
+                    "gouging_multiple": 6.36
+                },
+                {
+                    "cpt_code": "81000",
+                    "error_type": "PHANTOM CHARGES",
+                    "reason": "Lab not performed.",
+                    "evidence_quote": "Patient unable to void.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Service not performed.",
+                    "charged_amount": 60.00,
+                    "medicare_rate": 12.00,
+                    "gouging_multiple": 5.00
+                }
+            ],
+            "Dr. Perry Cox": [
+                {
+                    "cpt_code": "99285",
+                    "error_type": "UPCODING",
+                    "reason": "Consultation note copied from previous.",
+                    "evidence_quote": "Note identical to previous day.",
+                    "suggested_code": "99283",
+                    "suggested_code_explanation": "Level based on new info only.",
+                    "charged_amount": 2000.00,
+                    "medicare_rate": 180.00,
+                    "gouging_multiple": 11.11
+                },
+                {
+                    "cpt_code": "20605",
+                    "error_type": "UNBUNDLING",
+                    "reason": "Arthrocentesis billed with E/M.",
+                    "evidence_quote": "Procedure only visit.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "E/M not billable.",
+                    "charged_amount": 300.00,
+                    "medicare_rate": 0.00,
+                    "gouging_multiple": "Infinity"
+                },
+                {
+                    "cpt_code": "71046",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "CXR shows no acute process.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 250.00,
+                    "medicare_rate": 40.00,
+                    "gouging_multiple": 6.25
+                }
+            ],
+            "Dr. Bob Kelso": [
+                {
+                    "cpt_code": "99285",
+                    "error_type": "UPCODING",
+                    "reason": "Social admission.",
+                    "evidence_quote": "No medical necessity, placement issue.",
+                    "suggested_code": "99281",
+                    "suggested_code_explanation": "Low complexity.",
+                    "charged_amount": 1800.00,
+                    "medicare_rate": 180.00,
+                    "gouging_multiple": 10.00
+                },
+                {
+                    "cpt_code": "36600",
+                    "error_type": "PHANTOM CHARGES",
+                    "reason": "Arterial puncture billed, venous performed.",
+                    "evidence_quote": "Venous blood gas drawn.",
+                    "suggested_code": "36415",
+                    "suggested_code_explanation": "Venipuncture.",
+                    "charged_amount": 400.00,
+                    "medicare_rate": 20.00,
+                    "gouging_multiple": 20.00
+                },
+                {
+                    "cpt_code": "93010",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "EKG interpretation.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 100.00,
+                    "medicare_rate": 15.00,
+                    "gouging_multiple": 6.66
+                }
+            ]
+        },
+        "Geisinger Scenery Park": {
+            "Dr. Doogie Howser": [
+                {
+                    "cpt_code": "99214",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Office visit for hypertension and diabetes management.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 250.00,
+                    "medicare_rate": 110.00,
+                    "gouging_multiple": 2.27
+                },
+                {
+                    "cpt_code": "99215",
+                    "error_type": "UPCODING",
+                    "reason": "Time spent does not justify level 5.",
+                    "evidence_quote": "15 minute visit.",
+                    "suggested_code": "99213",
+                    "suggested_code_explanation": "Level 3 office visit.",
+                    "charged_amount": 400.00,
+                    "medicare_rate": 150.00,
+                    "gouging_multiple": 2.66
+                },
+                {
+                    "cpt_code": "81002",
+                    "error_type": "UNBUNDLING",
+                    "reason": "Dipstick billed with UA.",
+                    "evidence_quote": "Billed in addition to 81000.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Bundled.",
+                    "charged_amount": 20.00,
+                    "medicare_rate": 0.00,
+                    "gouging_multiple": "Infinity"
+                }
+            ],
+            "Dr. Michaela Quinn": [
+                {
+                    "cpt_code": "17110",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Destruction of 3 benign warts.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 200.00,
+                    "medicare_rate": 80.00,
+                    "gouging_multiple": 2.50
+                },
+                {
+                    "cpt_code": "99396",
+                    "error_type": "UPCODING",
+                    "reason": "Preventative exam billed with sick visit.",
+                    "evidence_quote": "Focused visit for flu.",
+                    "suggested_code": "99213",
+                    "suggested_code_explanation": "Office visit.",
+                    "charged_amount": 350.00,
+                    "medicare_rate": 100.00,
+                    "gouging_multiple": 3.50
+                },
+                {
+                    "cpt_code": "90471",
+                    "error_type": "PHANTOM CHARGES",
+                    "reason": "Immunization not given.",
+                    "evidence_quote": "Patient refused flu shot.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Service not performed.",
+                    "charged_amount": 50.00,
+                    "medicare_rate": 20.00,
+                    "gouging_multiple": 2.50
+                }
+            ],
+            "Dr. Frasier Crane": [
+                {
+                    "cpt_code": "90837",
+                    "error_type": "UPCODING",
+                    "reason": "Psychotherapy time short.",
+                    "evidence_quote": "30 minute session.",
+                    "suggested_code": "90832",
+                    "suggested_code_explanation": "30 min psychotherapy.",
+                    "charged_amount": 400.00,
+                    "medicare_rate": 100.00,
+                    "gouging_multiple": 4.00
+                },
+                {
+                    "cpt_code": "90791",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Psychiatric diagnostic evaluation.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 500.00,
+                    "medicare_rate": 150.00,
+                    "gouging_multiple": 3.33
+                },
+                {
+                    "cpt_code": "96127",
+                    "error_type": "UNBUNDLING",
+                    "reason": "Brief emotional assessment bundled.",
+                    "evidence_quote": "Part of E/M.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Bundled.",
+                    "charged_amount": 50.00,
+                    "medicare_rate": 0.00,
+                    "gouging_multiple": "Infinity"
+                }
+            ],
+            "Dr. Niles Crane": [
+                {
+                    "cpt_code": "90834",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "45 minute psychotherapy session.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 250.00,
+                    "medicare_rate": 80.00,
+                    "gouging_multiple": 3.12
+                },
+                {
+                    "cpt_code": "99214",
+                    "error_type": "UPCODING",
+                    "reason": "Medication management only.",
+                    "evidence_quote": "Refill of antidepressant, no therapy.",
+                    "suggested_code": "99212",
+                    "suggested_code_explanation": "Low complexity.",
+                    "charged_amount": 300.00,
+                    "medicare_rate": 60.00,
+                    "gouging_multiple": 5.00
+                },
+                {
+                    "cpt_code": "90887",
+                    "error_type": "PHANTOM CHARGES",
+                    "reason": "Family not present.",
+                    "evidence_quote": "Family consultation billed, patient came alone.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Service not performed.",
+                    "charged_amount": 200.00,
+                    "medicare_rate": 60.00,
+                    "gouging_multiple": 3.33
                 }
             ]
         }

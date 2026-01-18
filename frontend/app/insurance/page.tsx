@@ -51,7 +51,7 @@ interface ZipData {
 }
 
 const data = hospitalsData as ZipData;
-const ZIP_CODES = ["16803", "16804", "16805"];
+const ZIP_CODES = Object.keys(data);
 
 export default function InsurancePortal() {
   const [selectedZip, setSelectedZip] = useState<string | null>(null);
