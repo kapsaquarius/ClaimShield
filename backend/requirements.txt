@@ -7,4 +7,3 @@ Pillow
 pytesseract
 python-dotenv
 pygments
-raganything[text]
