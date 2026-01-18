@@ -613,29 +613,31 @@ export default function InsurancePortal() {
                 )}
 
                 {chartModalData.type === 'GOUGING' && (
-                  <div className="w-full h-[400px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <ComposedChart
-                        data={calculateGougingGap(chartModalData.records)}
-                        margin={{
-                          top: 20,
-                          right: 20,
-                          bottom: 20,
-                          left: 20,
-                        }}
-                      >
-                        <CartesianGrid stroke="#334155" strokeDasharray="3 3" vertical={false} />
-                        <XAxis dataKey="id" stroke="#94A3B8" label={{ value: 'Case ID (Sorted by Cost)', position: 'insideBottom', offset: -10, fill: '#94A3B8' }} />
-                        <YAxis stroke="#94A3B8" label={{ value: 'Amount ($)', angle: -90, position: 'insideLeft', fill: '#94A3B8' }} />
-                        <Tooltip
-                          contentStyle={{ backgroundColor: '#1E293B', borderColor: '#334155', borderRadius: '12px', color: '#fff' }}
-                          cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                        />
-                        <Legend wrapperStyle={{ paddingTop: '20px' }} />
-                        <Bar dataKey="medicare" name="Medicare Rate" stackId="a" fill="#10B981" radius={[0, 0, 4, 4]} />
-                        <Bar dataKey="charged" name="Charged Amount" stackId="a" fill="#EF4444" radius={[4, 4, 0, 0]} />
-                      </ComposedChart>
-                    </ResponsiveContainer>
+                  <div className="w-full flex flex-col">
+                    <div className="w-full h-[400px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <ComposedChart
+                          data={calculateGougingGap(chartModalData.records)}
+                          margin={{
+                            top: 20,
+                            right: 20,
+                            bottom: 20,
+                            left: 20,
+                          }}
+                        >
+                          <CartesianGrid stroke="#334155" strokeDasharray="3 3" vertical={false} />
+                          <XAxis dataKey="id" stroke="#94A3B8" label={{ value: 'Case ID (Sorted by Cost)', position: 'insideBottom', offset: -10, fill: '#94A3B8' }} />
+                          <YAxis stroke="#94A3B8" label={{ value: 'Amount ($)', angle: -90, position: 'insideLeft', fill: '#94A3B8' }} />
+                          <Tooltip
+                            contentStyle={{ backgroundColor: '#1E293B', borderColor: '#334155', borderRadius: '12px', color: '#fff' }}
+                            cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                          />
+                          <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                          <Bar dataKey="medicare" name="Medicare Rate" stackId="a" fill="#10B981" radius={[0, 0, 4, 4]} />
+                          <Bar dataKey="charged" name="Charged Amount" stackId="a" fill="#EF4444" radius={[4, 4, 0, 0]} />
+                        </ComposedChart>
+                      </ResponsiveContainer>
+                    </div>
                     <div className="text-center text-slate-400 text-sm mt-4">
                       <span className="text-red-400 font-bold">Red Area</span> represents the overcharge above Medicare rates.
                     </div>
