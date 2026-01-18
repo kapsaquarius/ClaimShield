@@ -1,0 +1,238 @@
+{
+    "16803": {
+        "Mount Nittany Medical Center": {
+            "Dr. Anjali Patel": [
+                {
+                    "cpt_code": "99283",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Patient presents with moderate flu symptoms. Vitals stable.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 450.00,
+                    "medicare_rate": 78.00,
+                    "gouging_multiple": 5.77
+                },
+                {
+                    "cpt_code": "73610",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Ankle X-Ray 3 views complete. No fracture seen.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 180.00,
+                    "medicare_rate": 35.00,
+                    "gouging_multiple": 5.14
+                },
+                {
+                    "cpt_code": "96372",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Administered 30mg Toradol IM for pain relief.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 125.00,
+                    "medicare_rate": 20.00,
+                    "gouging_multiple": 6.25
+                },
+                {
+                    "cpt_code": "99284",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Patient with severe abdominal pain, requires CT scan and detailed workup.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 950.00,
+                    "medicare_rate": 125.00,
+                    "gouging_multiple": 7.60
+                },
+                {
+                    "cpt_code": "99283",
+                    "error_type": "DOWNCODING",
+                    "reason": "Documentation supports a higher level of care than billed.",
+                    "evidence_quote": "Complex laceration repair and concussion protocol required.",
+                    "suggested_code": "99284",
+                    "suggested_code_explanation": "Medical Decision Making was of moderate-high complexity.",
+                    "charged_amount": 450.00,
+                    "medicare_rate": 78.00,
+                    "gouging_multiple": 5.77
+                }
+            ],
+            "Dr. Marcus Thorne": [
+                {
+                    "cpt_code": "99285",
+                    "error_type": "UPCODING",
+                    "reason": "High severity code billed for minor condition.",
+                    "evidence_quote": "Patient complains of stubbed toe. Vitals stable. Pain 2/10.",
+                    "suggested_code": "99282",
+                    "suggested_code_explanation": "Low complexity decision making required.",
+                    "charged_amount": 1850.00,
+                    "medicare_rate": 180.00,
+                    "gouging_multiple": 10.28
+                },
+                {
+                    "cpt_code": "99285",
+                    "error_type": "UPCODING",
+                    "reason": "High severity code billed for stable patient.",
+                    "evidence_quote": "Medication refill request. No acute distress.",
+                    "suggested_code": "99281",
+                    "suggested_code_explanation": "Visit was primarily nursing in nature.",
+                    "charged_amount": 1850.00,
+                    "medicare_rate": 180.00,
+                    "gouging_multiple": 10.28
+                },
+                {
+                    "cpt_code": "96372",
+                    "error_type": "DISCREPANCY",
+                    "reason": "Therapeutic injection billed but no drug administration recorded.",
+                    "evidence_quote": "Prescription written for oral Ibuprofen.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Service not performed.",
+                    "charged_amount": 250.00,
+                    "medicare_rate": 20.00,
+                    "gouging_multiple": 12.50
+                },
+                {
+                    "cpt_code": "99284",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Patient with chest pain, cardiac workup negative.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 950.00,
+                    "medicare_rate": 125.00,
+                    "gouging_multiple": 7.60
+                },
+                {
+                    "cpt_code": "99285",
+                    "error_type": "UPCODING",
+                    "reason": "Detailed history not comprehensive enough for Level 5.",
+                    "evidence_quote": "History limited by patient refusal.",
+                    "suggested_code": "99283",
+                    "suggested_code_explanation": "Documentation limits code selection.",
+                    "charged_amount": 1850.00,
+                    "medicare_rate": 180.00,
+                    "gouging_multiple": 10.28
+                }
+            ]
+        },
+        "Penn Highlands Healthcare": {
+            "Dr. Sarah Jenkins": [
+                {
+                    "cpt_code": "27766",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Open reduction internal fixation of medial malleolus.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 4500.00,
+                    "medicare_rate": 650.00,
+                    "gouging_multiple": 6.92
+                },
+                {
+                    "cpt_code": "12001",
+                    "error_type": "UNBUNDLING",
+                    "reason": "Simple repair is included in the global surgical package of 27766.",
+                    "evidence_quote": "Skin closed with 4-0 nylon sutures.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "This service is bundled into CPT 27766.",
+                    "charged_amount": 350.00,
+                    "medicare_rate": 0.00,
+                    "gouging_multiple": "Infinity"
+                },
+                {
+                    "cpt_code": "11042",
+                    "error_type": "UNBUNDLING",
+                    "reason": "Debridement at the site of open fracture repair is bundled.",
+                    "evidence_quote": "Minimal debridement of skin edges performed prior to closure.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Bundled into primary procedure.",
+                    "charged_amount": 275.00,
+                    "medicare_rate": 0.00,
+                    "gouging_multiple": "Infinity"
+                },
+                {
+                    "cpt_code": "99284",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Pre-operative evaluation detailed.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 950.00,
+                    "medicare_rate": 125.00,
+                    "gouging_multiple": 7.60
+                },
+                {
+                    "cpt_code": "73610",
+                    "error_type": "DISCREPANCY",
+                    "reason": "Only 2 views documented, but 3 view code billed.",
+                    "evidence_quote": "AP and Lateral views of ankle obtained.",
+                    "suggested_code": "73600",
+                    "suggested_code_explanation": "Radiologic examination, ankle; 2 views.",
+                    "charged_amount": 180.00,
+                    "medicare_rate": 30.00,
+                    "gouging_multiple": 6.00
+                }
+            ]
+        },
+        "Geisinger Clinic": {
+            "Dr. David Lee": [
+                {
+                    "cpt_code": "99285",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Patient in anaphylactic shock. Epinephrine administered immediately.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 1900.00,
+                    "medicare_rate": 180.00,
+                    "gouging_multiple": 10.55
+                },
+                {
+                    "cpt_code": "96372",
+                    "error_type": "DISCREPANCY",
+                    "reason": "Documentation indicates oral administration.",
+                    "evidence_quote": "Tylenol given PO.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Oral meds are generally not separately billable in ED.",
+                    "charged_amount": 150.00,
+                    "medicare_rate": 20.00,
+                    "gouging_multiple": 7.50
+                },
+                {
+                    "cpt_code": "99283",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Evaluation of sprained wrist.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 500.00,
+                    "medicare_rate": 78.00,
+                    "gouging_multiple": 6.41
+                },
+                {
+                    "cpt_code": "93010",
+                    "error_type": "UNBUNDLING",
+                    "reason": "EKG interpretation often bundled if not clearly distinct.",
+                    "evidence_quote": "EKG strip reviewed.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": "Requires distinct report to be billable.",
+                    "charged_amount": 100.00,
+                    "medicare_rate": 15.00,
+                    "gouging_multiple": 6.66
+                },
+                {
+                    "cpt_code": "99284",
+                    "error_type": null,
+                    "reason": null,
+                    "evidence_quote": "Kidney stone confirmed on CT. Pain management initiated.",
+                    "suggested_code": null,
+                    "suggested_code_explanation": null,
+                    "charged_amount": 925.00,
+                    "medicare_rate": 125.00,
+                    "gouging_multiple": 7.40
+                }
+            ]
+        }
+    }
+}
