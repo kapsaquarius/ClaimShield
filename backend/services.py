@@ -148,7 +148,7 @@ def generate_appeal_letter(audit_result: Dict[str, Any], level: int) -> str:
         2: "Write a polite but specific message pointing out a discrepancy. Assume it is a typo. Use phrases like 'I noticed the bill lists X, but my doctor mentioned Y' and 'Please double-check the records.' Persona: Sharp Observer.",
         3: "Write a formal, direct business letter. State the facts clearly: 'The clinical evidence does not support Code X.' Request a specific correction and re-issuance of the bill. Do not use 'I feel' statements; stick to the data. Persona: Professional Auditor.",
         4: "Write a stern, authoritative objection. Explicitly state that the charge is invalid according to standard billing guidelines. Use phrases like 'This claim is rejected based on lack of medical necessity' and 'Immediate removal of this charge is required.' Persona: Policy Enforcer.",
-        5: "Write a firm, legal notice citing the No Surprises Act and Federal False Claims Act. Demand a written response within 30 days and mention reporting this to the State Insurance Commissioner if not resolved. Persona: Legal Threat."
+        5: "Write a firm, legal notice citing the No Surprises Act and Federal False Claims Act. Demand a written response within 30 days and mention reporting this to the State Insurance Commissioner if not resolved. Persona: Legal Enforcer."
     }
     
     selected_instruction = tone_instructions.get(level, tone_instructions[3])

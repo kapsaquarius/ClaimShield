@@ -264,31 +264,35 @@ export default function ResultsPage() {
                         <FileText className="w-4 h-4" />
                         <span>View Overall summary</span>
                     </button>
-                    <button
-                        onClick={() => setIsConfiguringAppeal(true)}
-                        disabled={isGeneratingAppeal}
-                        className={cn(
-                            "flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-4 py-2 rounded-lg font-medium transition-all shadow-lg shadow-blue-500/20 active:scale-95",
-                            isGeneratingAppeal && "opacity-80 cursor-wait"
-                        )}
-                    >
-                        {isGeneratingAppeal ? (
-                            <>
-                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-                                <span>Generating...</span>
-                            </>
-                        ) : (
-                            <>
-                                <FileText className="w-4 h-4" />
-                                <span>Generate Appeal Letter</span>
-                            </>
-                        )}
-                    </button>
+                    {auditResult.flagged_items?.length > 0 && (
+                        <button
+                            onClick={() => setIsConfiguringAppeal(true)}
+                            disabled={isGeneratingAppeal}
+                            className={cn(
+                                "flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-4 py-2 rounded-lg font-medium transition-all shadow-lg shadow-blue-500/20 active:scale-95",
+                                isGeneratingAppeal && "opacity-80 cursor-wait"
+                            )}
+                        >
+                            {isGeneratingAppeal ? (
+                                <>
+                                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+                                    <span>Generating...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <FileText className="w-4 h-4" />
+                                    <span>Generate Appeal Letter</span>
+                                </>
+                            )}
+                        </button>
+                    )}
 
-                    <div className="flex items-center space-x-2 bg-red-500/10 text-red-400 px-3 py-1.5 rounded-full border border-red-500/20 text-sm font-medium">
-                        <AlertOctagon className="w-4 h-4 mr-2" />
-                        Discrepancies Found
-                    </div>
+                    {auditResult.flagged_items?.length > 0 && (
+                        <div className="flex items-center space-x-2 bg-red-500/10 text-red-400 px-3 py-1.5 rounded-full border border-red-500/20 text-sm font-medium">
+                            <AlertOctagon className="w-4 h-4 mr-2" />
+                            Discrepancies Found
+                        </div>
+                    )}
                 </div>
             </header>
 
@@ -650,18 +654,7 @@ export default function ResultsPage() {
                                                 yPos += 10;
 
                                                 doc.setFont("times", "bold");
-                                                doc.text("Billing Department", margin, yPos);
-                                                yPos += 5;
-                                                doc.text("Mercy General Hospital", margin, yPos);
-                                                yPos += 5;
-                                                doc.setFont("times", "normal");
-                                                doc.text("123 Health Ave, Metropolis, NY 10012", margin, yPos);
-                                                yPos += 10;
-
-                                                doc.setFont("times", "bold");
-                                                doc.text("RE: Formal Appeal for Account #8492043", margin, yPos);
-                                                yPos += 5;
-                                                doc.text("Patient: John Doe", margin, yPos);
+                                                doc.text("RE: Formal Appeal", margin, yPos);
                                                 yPos += 15;
 
                                                 doc.text(appealData?.subject || "Appeal Request", margin, yPos);
@@ -706,7 +699,7 @@ export default function ResultsPage() {
                                     <div className="w-full max-w-[8.5in] bg-white text-black shadow-xl p-[1in] min-h-[11in] font-serif text-[11pt] leading-relaxed">
                                         <div className="mb-8">
                                             <div className="text-right text-gray-500 text-sm mb-4">May 16, 2024</div>
-                                            <div className="font-bold mb-4">
+                                            {/* <div className="font-bold mb-4">
                                                 Billing Department<br />
                                                 Mercy General Hospital<br />
                                                 123 Health Ave, Metropolis, NY 10012
@@ -714,7 +707,7 @@ export default function ResultsPage() {
                                             <div className="font-bold">
                                                 RE: Formal Appeal for Account #8492043<br />
                                                 Patient: John Doe
-                                            </div>
+                                            </div> */}
                                         </div>
 
                                         <div className="font-bold mb-4">{appealData?.subject}</div>
