@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "ClaimShield",
   description: "AI-powered healthcare auditing",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({

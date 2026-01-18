@@ -158,7 +158,7 @@ export default function InsurancePortal() {
   };
 
   return (
-    <div className="min-h-screen p-6 relative flex flex-col items-center bg-slate-950 font-sans">
+    <div className="min-h-screen p-6 relative flex flex-col items-center font-sans">
       {/* Background Ambience */}
       <div className="absolute top-[10%] right-[10%] w-[500px] h-[500px] bg-accent/10 rounded-full blur-[120px] -z-10" />
       <div className="absolute bottom-[10%] left-[10%] w-[400px] h-[400px] bg-primary/10 rounded-full blur-[100px] -z-10" />
