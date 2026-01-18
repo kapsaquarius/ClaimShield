@@ -7,13 +7,15 @@ export default function Home() {
       <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-[100px] -z-10" />
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/20 rounded-full blur-[100px] -z-10" />
 
-      <main className="max-w-4xl w-full flex flex-col items-center z-10 space-y-12">
-        <div className="text-center space-y-6">
-          <div className="inline-flex items-center justify-center p-3 bg-white/5 rounded-2xl ring-1 ring-white/10 mb-4 shadow-lg backdrop-blur-md">
-            <ShieldCheck className="w-8 h-8 text-accent mr-3" />
-            <h1 className="text-2xl font-bold tracking-tight text-white">ClaimShield</h1>
-          </div>
+      <header className="absolute top-0 left-0 w-full p-8 z-50">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="w-10 h-10 text-accent" />
+          <h1 className="text-3xl font-bold tracking-tight text-white">ClaimShield</h1>
+        </div>
+      </header>
 
+      <main className="max-w-4xl w-full flex flex-col items-center z-10 space-y-12 pt-32">
+        <div className="text-center space-y-6">
           <h2 className="text-5xl md:text-7xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 pb-2">
             Healthcare Transparency <br /> Reimagined.
           </h2>
@@ -71,7 +73,7 @@ export default function Home() {
             Real-time Analysis
           </div>
         </div>
-      </main>
-    </div>
+      </main >
+    </div >
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import { Upload, FileText, CheckCircle, AlertCircle, Loader2, ArrowRight, Shield } from "lucide-react";
+import { Upload, FileText, CheckCircle, AlertCircle, Loader2, ArrowRight, Shield, ShieldCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -116,13 +116,10 @@ export default function PatientPortal() {
           >
             <header className="absolute top-0 left-0 w-full flex justify-between items-center p-8 z-50">
               <Link href="/">
-                <Image
-                  src="/claimshield-logo.png"
-                  alt="ClaimShield Logo"
-                  width={250}
-                  height={70}
-                  className="h-16 w-auto"
-                />
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-10 h-10 text-accent" />
+                  <span className="text-3xl font-bold text-white tracking-tight">ClaimShield</span>
+                </div>
               </Link>
               <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium border border-primary/20">
                 Patient Portal

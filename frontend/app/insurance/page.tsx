@@ -4,7 +4,7 @@ import { useState } from "react";
 import dynamic from 'next/dynamic';
 
 const InsuranceChart = dynamic(() => import('@/components/InsuranceChart'), { ssr: false });
-import { Building2, TrendingUp, Download, Loader2, AlertCircle } from "lucide-react";
+import { Building2, TrendingUp, Download, Loader2, AlertCircle, ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
@@ -42,8 +42,11 @@ export default function InsurancePortal() {
 
       <div className="w-full max-w-6xl z-10 flex flex-col space-y-8">
         <header className="flex justify-between items-center py-4">
-          <Link href="/" className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
-            NexHacks Audit
+          <Link href="/" className="flex items-center gap-2">
+            <ShieldCheck className="w-10 h-10 text-accent" />
+            <span className="text-3xl font-bold text-white tracking-tight">
+              ClaimShield
+            </span>
           </Link>
           <div className="bg-accent/10 text-accent px-3 py-1 rounded-full text-sm font-medium border border-accent/20">
             Insurance Portal
