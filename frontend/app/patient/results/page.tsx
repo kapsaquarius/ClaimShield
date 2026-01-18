@@ -144,6 +144,7 @@ const HighlightableText = ({ text, highlights, onHighlightClick, selectedCpt, ge
 export default function ResultsPage() {
     const [selectedCpt, setSelectedCpt] = useState<string | null>(null);
     const [showAppeal, setShowAppeal] = useState(false);
+    const [showSummary, setShowSummary] = useState(false);
     const [isGeneratingAppeal, setIsGeneratingAppeal] = useState(false);
     const [auditResult, setAuditResult] = useState<any>(null);
     const [soapPdf, setSoapPdf] = useState<string | null>(null);
@@ -256,7 +257,13 @@ export default function ResultsPage() {
                     <span className="text-lg font-semibold text-white">Audit Result Review</span>
                 </div>
                 <div className="flex items-center space-x-4">
-                    { }
+                    <button
+                        onClick={() => setShowSummary(true)}
+                        className="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg font-medium transition-all border border-white/10"
+                    >
+                        <FileText className="w-4 h-4" />
+                        <span>View Overall summary</span>
+                    </button>
                     <button
                         onClick={() => setIsConfiguringAppeal(true)}
                         disabled={isGeneratingAppeal}
@@ -289,8 +296,8 @@ export default function ResultsPage() {
                 <div className="flex-1 flex relative">
                     <div className="w-1/2 p-4 md:p-8 overflow-y-auto bg-slate-800/50 flex flex-col items-center border-r border-white/5">
                         <div className="mb-4 flex items-center justify-between w-full max-w-4xl text-slate-400 text-sm">
-                            <span>CLINICAL_NOTES</span>
                             <span className="bg-slate-700 px-2 py-0.5 rounded text-xs">Digitized Record</span>
+                            <span>CLINICAL_NOTES</span>
                         </div>
 
                         <div className="w-full max-w-4xl min-h-[60rem] bg-white text-slate-800 shadow-2xl p-10 md:p-16 relative selection:bg-blue-100 transition-all">
@@ -348,8 +355,8 @@ export default function ResultsPage() {
 
                     <div className="w-1/2 p-4 md:p-8 overflow-y-auto bg-slate-800/50 flex flex-col items-center">
                         <div className="mb-4 flex items-center justify-between w-full max-w-4xl text-slate-400 text-sm">
-                            <span>HOSPITAL_BILL</span>
                             <span className="bg-slate-700 px-2 py-0.5 rounded text-xs">Digitized Record</span>
+                            <span>HOSPITAL_BILL</span>
                         </div>
 
                         <div className="w-full max-w-4xl min-h-[60rem] bg-white text-slate-800 shadow-2xl p-10 md:p-16 relative selection:bg-blue-100 transition-all">
@@ -785,6 +792,44 @@ export default function ResultsPage() {
                                 </div>
                                 <div className="mt-4 text-white/50 text-sm font-medium">
                                     Viewing Original {viewingFile === 'soap' ? 'Clinical Notes' : 'Hospital Bill'} Upload
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                <AnimatePresence>
+                    {showSummary && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+                            onClick={() => setShowSummary(false)}
+                        >
+                            <motion.div
+                                initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                                animate={{ scale: 1, opacity: 1, y: 0 }}
+                                exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                                className="bg-slate-900 border border-white/10 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <div className="p-6 border-b border-white/10 flex items-center justify-between bg-slate-950">
+                                    <h2 className="text-xl font-bold text-white flex items-center">
+                                        <Shield className="w-6 h-6 mr-3 text-blue-500" />
+                                        Audit Summary
+                                    </h2>
+                                    <button
+                                        onClick={() => setShowSummary(false)}
+                                        className="p-2 hover:bg-white/10 rounded-full text-slate-400 transition-colors"
+                                    >
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                </div>
+                                <div className="p-8 max-h-[70vh] overflow-y-auto">
+                                    <p className="text-slate-300 leading-relaxed text-lg whitespace-pre-wrap">
+                                        {auditResult.audit_summary}
+                                    </p>
                                 </div>
                             </motion.div>
                         </motion.div>
