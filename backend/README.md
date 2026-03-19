@@ -6,97 +6,46 @@ The ClaimShield backend is a high-performance **FastAPI** application designed t
 
 *   **Framework:** [FastAPI](https://fastapi.tiangolo.com/) (Python 3.9+)
 *   **Server:** Uvicorn
-*   **AI/LLM:** OpenRouter API (Accessing models like GPT-4o, Claude 3.5 Sonnet)
-*   **OCR & File Processing:**
+*   **AI/LLM:** OpenRouter API (Accessing models like `nvidia/nemotron-3-nano-30b-a3b:free` natively)
+*   **RAG System:** `sentence-transformers` (`all-MiniLM-L6-v2`) and `scikit-learn` for semantic matching.
+*   **OCR & Vector Processing:**
     *   `PyMuPDF` (fitz): For high-fidelity PDF text extraction.
     *   `Pytesseract`: For OCR on image-based uploads.
-    *   `Pillow` (PIL): For image manipulation.
-*   **Data Management:** Local JSON databases for CPT Codes and Medicare Rates.
+    *   `Pillow` (PIL) & `numpy`: For image and tensor manipulation.
+*   **Data Management:** Local JSON databases for CPT Codes (1,164 codes) and Medicare Rates.
 
 ## LLM Architecture & OpenRouter Integration
 
-We utilize an **Agentic Workflow** utilizing the **OpenRouter API** to chain together specialized AI agents. This allows us to use the best model for each specific sub-task (e.g., a vision-capable model for invoices, a high-reasoning model for auditing).
+We utilize an **Agentic Workflow** using the **OpenRouter API** to chain specialized agents. Recently, we upgraded this pipeline with **Retrieval-Augmented Generation (RAG)** to stop AI hallucinations when suggesting alternative billing codes.
 
 ### The Agent Pipeline
 
 1.  **Invoice Extraction Agent:**
-    *   **Goal:** Convert "ragged" OCR text or raw images of hospital bills into a standardized JSON schema.
-    *   **Prompt:** `prompts/invoice_extraction.txt`
-    *   **Model Input:** Raw text chunk or Base64 encoded image.
+    *   **Goal:** Convert "ragged" OCR text/images of bills into standardized JSON.
+    *   **Prompt:** `prompts/invoice_extraction.txt` (Strict JSON schema)
     *   **Output:** JSON object containing line items, CPT codes, and cost breakdowns.
 
-2.  **Auditor Agent:**
-    *   **Goal:** Cross-reference clinical validity against billed items.
-    *   **Data Injection:** We construct a massive context window containing:
-        *   Patient's Clinical Notes (SOAP).
-        *   Parsed Invoice JSON (from Agent 1).
-        *   *Golden Data:* Official CPT definitions retrieved from our local database to prevent hallucinations.
-    *   **Prompt:** `prompts/audit_claim.txt`
-    *   **Output:** A detailed audit report with flagged discrepancies, potential upcoding, and medical necessity reasoning.
+2.  **Auditor Agent & RAG System:**
+    *   **Goal:** Cross-reference clinical validity against billed items and generate definitive proof of upcoding or discrepancies.
+    *   **Data Injection:** Massive context window containing the patient's Clinical Notes (SOAP), Parsed Invoice JSON, and strict instructions to extract verbatim quotes.
+    *   **RAG Injection:** For every flagged "UPCODING" discrepancy, the system embeds the verbatim clinical evidence quote, vector-searches against 1,164 CPT embeddings loaded in RAM, and deterministically overwrites the AI's hallucinated suggestions with the actual nearest-neighbor CPT code.
 
 3.  **Appeal Generator Agent:**
-    *   **Goal:** specific legal/advocacy content.
-    *   **Mechanism:** Takes the audit result and a "Tone" parameter (1-5).
-    *   **Prompt:** `prompts/appeal_letter.txt`
-    *   **Output:** A fully formatted letter ready for PDF generation.
+    *   **Goal:** Generate hyper-specific legal advocacy content based on Tone.
+    *   **Mechanism:** Parses JSON from the audit and enforces one of 5 strict tone templates (ranging from *Confused Patient* to *Legal Threat*). Anti-hallucination guardrails completely forbid injecting unverified patient details.
+    *   **Output:** A structured JSON object (`subject`, `salutation`, `body`, `call_to_action`, `sign_off`) ready for frontend rendering.
 
 ## API Routes
 
 ### 1. Audit Claim
 **Endpoint:** `POST /api/audit`
-
 Analyzes uploaded documents to perform a full medical bill audit.
-
-*   **Request Body (`multipart/form-data`):**
-    *   `clinical_notes`: File (PDF/Image) - The doctor's SOAP notes.
-    *   `hospital_bill`: File (PDF/Image) - The final invoice to audit.
-
-*   **Process flow:**
-    1.  **Ingest:** Files are received and processed based on MIME type. PDFs use `PyMuPDF` for speed; Images use `Pytesseract`.
-    2.  **Parse:** The *Invoice Agent* extracts structured data from the bill.
-    3.  **Enrich:** The system queries the local `cpt_database` to look up official definitions for every code found.
-    4.  **Audit:** The *Auditor Agent* performs the cross-reference logic.
-    5.  **Gouging Check:** A deterministic algorithm compares billed amounts against the local `cpt_medicare_rates` database.
-
-*   **Response (JSON):**
-    ```json
-    {
-      "patient_details": { ... },
-      "flagged_items": [
-        {
-          "cpt_code": "99285",
-          "error_type": "Upcoding",
-          "reason": "Clinical notes do not support Level 5 emergency visit...",
-          "confidence": "High"
-        }
-      ],
-      "price_gouging_details": [ ... ],
-      "audit_summary": "..."
-    }
-    ```
+1.  **Ingest:** Files processed via `PyMuPDF` or `Pytesseract`.
+2.  **Parse:** *Invoice Agent* extracts structured data.
+3.  **Audit:** *Auditor Agent* cross-references the bill vs. the notes.
+4.  **RAG Match:** Cosine similarity search injects highly-accurate `suggested_cpt`.
+5.  **Gouging Check:** Deterministic algorithm flags extreme markups against 1,164 Medicare rates.
 
 ### 2. Generate Appeal Letter
 **Endpoint:** `POST /api/generate-appeal`
-
-Generates a formal appeal letter based on a previous audit.
-
-*   **Request Body (JSON):**
-    ```json
-    {
-      "audit_result": { ... }, // The full JSON object returned from /api/audit
-      "level": 3 // Integer 1-5 (1=Collaborative, 5=Legal Threat)
-    }
-    ```
-
-*   **Response (JSON):**
-    ```json
-    {
-      "appeal_letter": {
-        "subject": "Formal Dispute of Account #12345",
-        "salutation": "To the Billing Department,",
-        "body": "...",
-        "call_to_action": "Please remove these charges immediately...",
-        "sign_off": "Sincerely, [Patient Name]"
-      }
-    }
-    ```
+Generates a formal, 5-part JSON formatted appeal letter based on a previous audit structure. Evaluates inputs against the strict `level` 1-5 structural templates.
