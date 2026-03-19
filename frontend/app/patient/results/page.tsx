@@ -912,7 +912,7 @@ export default function ResultsPage() {
                                         <div className="mb-4">{appealData?.salutation}</div>
 
                                         <div className="space-y-4 mb-6 text-justify">
-                                            <p>{appealData?.body}</p>
+                                            <p className="whitespace-pre-wrap leading-relaxed space-y-4 text-slate-800">{appealData?.body}</p>
                                         </div>
 
                                         <div className="font-bold mb-8">{appealData?.call_to_action}</div>

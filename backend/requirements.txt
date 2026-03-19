@@ -7,3 +7,5 @@ Pillow
 pytesseract
 python-dotenv
 pygments
+sentence-transformers
+scikit-learn

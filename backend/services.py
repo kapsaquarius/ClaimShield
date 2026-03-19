@@ -4,11 +4,59 @@ import base64
 import requests
 from typing import List, Dict, Any, Union
 from dotenv import load_dotenv
+import numpy as np
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
 
 load_dotenv()
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 MODEL = os.getenv("MODEL")
+embedding_model = None
+cpt_embeddings = None
+cpt_data_list = []
+
+def init_rag_system():
+    global embedding_model, cpt_embeddings, cpt_data_list
+    if embedding_model is not None:
+        return
+        
+    print("Initializing RAG system (loading model and embeddings)...")
+    try:
+        embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+        cpt_db = load("database/cpt_codes.json")
+        cpt_data_list = [(code, desc) for code, desc in cpt_db.items()]
+        
+        texts_to_embed = [f"{code}: {desc}" for code, desc in cpt_data_list]
+        print(f"Embedding {len(texts_to_embed)} CPT codes...")
+        cpt_embeddings = embedding_model.encode(texts_to_embed)
+        print("RAG initialization complete.")
+    except Exception as e:
+        print(f"Failed to initialize RAG: {e}")
+
+def get_rag_suggested_cpt(evidence_quote: str) -> Dict[str, str]:
+    init_rag_system()
+    if embedding_model is None or cpt_embeddings is None or not cpt_data_list:
+        return {}
+        
+    try:
+        query_embedding = embedding_model.encode([evidence_quote])
+        similarities = cosine_similarity(query_embedding, cpt_embeddings)[0]
+        best_match_idx = np.argmax(similarities)
+        best_score = similarities[best_match_idx]
+        
+        best_code, best_desc = cpt_data_list[best_match_idx]
+        
+        if best_score < 0.70:
+            return {}
+            
+        return {
+            "suggested_code": str(best_code),
+            "suggested_code_explanation": f"RAG matched contradictory statement to CPT {best_code}: {best_desc} (Confidence: {best_score:.2f})"
+        }
+    except Exception as e:
+        print(f"Error during RAG retrieval: {e}")
+        return {}
 
 def load(path: str) -> Dict[str, str]:
     try:
@@ -31,7 +79,7 @@ def _load_prompt(filename: str) -> str:
 def _encode_image(image_bytes: bytes) -> str:
     return base64.b64encode(image_bytes).decode('utf-8')
 
-def call_openrouter_api(messages: List[Dict[str, Any]], model: str = MODEL) -> str:
+def call_openrouter_api(messages: List[Dict[str, Any]], model: str = MODEL, require_json: bool = True) -> str:
     if not OPENROUTER_API_KEY:
         raise ValueError("OPENROUTER_API_KEY environment variable not set.")
     
@@ -44,8 +92,10 @@ def call_openrouter_api(messages: List[Dict[str, Any]], model: str = MODEL) -> s
         "model": model,
         "messages": messages,
         "temperature": 0.1,
-        "response_format": {"type": "json_object"}
     }
+    
+    if require_json:
+        payload["response_format"] = {"type": "json_object"}
     
     try:
         response = requests.post(OPENROUTER_URL, headers=headers, json=payload, timeout=60)
@@ -112,6 +162,25 @@ def audit_claim(clinical_notes_text: str, invoice_json: Dict[str, Any], official
     except json.JSONDecodeError:
         raise Exception(f"Failed to parse JSON from Auditor Agent: {response_text}")
 
+    if "flagged_items" in audit_result:
+        for item in audit_result.get("flagged_items", []):
+            evidence = item.get("evidence_quote")
+            error_type = item.get("error_type", "")
+            
+            # RAG suggestions only make sense for UPCODING, not Phantom Charges
+            if evidence and error_type == "UPCODING":
+                rag_suggestion = get_rag_suggested_cpt(evidence)
+                if rag_suggestion:
+                    item["suggested_code"] = rag_suggestion["suggested_code"]
+                    item["suggested_code_explanation"] = rag_suggestion["suggested_code_explanation"]
+                else:
+                    item["suggested_code"] = None
+                    item["suggested_code_explanation"] = "No semantically similar CPT code found for the evidence."
+            elif error_type != "UPCODING":
+                # Ensure no hallucinated codes for non-upcoding discrepancies
+                item["suggested_code"] = None
+                item["suggested_code_explanation"] = None
+
     audit_result["price_gouging_details"] = _calculate_price_gouging(invoice_json, medicare_rates)
     return audit_result
 
@@ -144,11 +213,11 @@ def _calculate_price_gouging(invoice_json: Dict[str, Any], medicare_rates: Dict[
 
 def generate_appeal_letter(audit_result: Dict[str, Any], level: int) -> str:
     tone_instructions = {
-        1: "Write a curious, collaborative email asking for clarification. Use phrases like 'I was confused by this item' and 'Could you help me understand?' Do not accuse them of error yet. Persona: Confused Patient.",
-        2: "Write a polite but specific message pointing out a discrepancy. Assume it is a typo. Use phrases like 'I noticed the bill lists X, but my doctor mentioned Y' and 'Please double-check the records.' Persona: Sharp Observer.",
-        3: "Write a formal, direct business letter. State the facts clearly: 'The clinical evidence does not support Code X.' Request a specific correction and re-issuance of the bill. Do not use 'I feel' statements; stick to the data. Persona: Professional Auditor.",
-        4: "Write a stern, authoritative objection. Explicitly state that the charge is invalid according to standard billing guidelines. Use phrases like 'This claim is rejected based on lack of medical necessity' and 'Immediate removal of this charge is required.' Persona: Policy Enforcer.",
-        5: "Write a firm, legal notice citing the No Surprises Act and Federal False Claims Act. Demand a written response within 30 days and mention reporting this to the State Insurance Commissioner if not resolved. Persona: Legal Enforcer."
+        1: "LEVEL 1: Confused Patient",
+        2: "LEVEL 2: Sharp Observer",
+        3: "LEVEL 3: Professional Auditor",
+        4: "LEVEL 4: Policy Enforcer",
+        5: "LEVEL 5: Legal Threat"
     }
     
     selected_instruction = tone_instructions.get(level, tone_instructions[3])
