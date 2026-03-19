@@ -1,11 +1,19 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { ArrowLeft, CheckCircle, AlertTriangle, AlertOctagon, Info, ChevronRight, ChevronLeft, X, ZoomIn, ZoomOut, Download, FileText, FileDown, Eye, Shield } from "lucide-react";
+import { ArrowLeft, CheckCircle, AlertTriangle, AlertOctagon, Info, ChevronRight, ChevronLeft, X, ZoomIn, ZoomOut, Download, FileText, FileDown, Eye, Shield, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { jsPDF } from "jspdf";
+import { Document, Page, pdfjs } from 'react-pdf';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+
 
 
 const APPEAL_LEVELS = {
@@ -41,6 +49,14 @@ const COLORS = [
 const RAW_COLORS = [
     "cyan", "fuchsia", "emerald", "orange"
 ];
+
+const COLOR_MAP: any = {
+    cyan: { bg: 'rgba(103, 232, 249, 0.4)', border: 'rgba(6, 182, 212, 0.8)' },
+    fuchsia: { bg: 'rgba(240, 171, 252, 0.4)', border: 'rgba(217, 70, 239, 0.8)' },
+    emerald: { bg: 'rgba(110, 231, 183, 0.4)', border: 'rgba(16, 185, 129, 0.8)' },
+    orange: { bg: 'rgba(253, 186, 116, 0.4)', border: 'rgba(249, 115, 22, 0.8)' },
+    slate: { bg: 'rgba(203, 213, 225, 0.4)', border: 'rgba(100, 116, 139, 0.8)' },
+};
 
 const findFuzzyRanges = (fullText: string, quotes: any[]) => {
     if (!fullText) return [];
@@ -141,7 +157,139 @@ const HighlightableText = ({ text, highlights, onHighlightClick, selectedCpt, ge
     );
 };
 
+const PdfViewer = ({ pdfData, pageIndex, highlights, selectedCpt, getHighlightStyle, getRawColor, onHighlightClick, sourceDocType }: any) => {
+    if (!pdfData) return <div className="p-8 text-gray-400 italic">No PDF document loaded.</div>;
+
+    return (
+        <div className="relative w-full flex justify-center bg-transparent overflow-hidden">
+            <Document file={pdfData} className="flex justify-center flex-col items-center">
+                <Page
+                    pageNumber={pageIndex + 1}
+                    renderTextLayer={false}
+                    renderAnnotationLayer={false}
+                    width={550}
+                    className="relative"
+                >
+                    {highlights.map((item: any, idx: number) => {
+                        let boxes = [];
+                        if (item.bounding_boxes && Array.isArray(item.bounding_boxes)) {
+                           if (item.source_doc && item.source_doc !== 'both' && item.source_doc !== sourceDocType) return null;
+                           boxes = item.bounding_boxes;
+                        } else if (item.bounding_boxes) {
+                           boxes = item.bounding_boxes[sourceDocType] || [];
+                        }
+
+                        if (!boxes || boxes.length === 0) return null;
+                        const isSelected = selectedCpt === item.cpt_code;
+                        const rawColor = getRawColor(item.cpt_code);
+                        const colors = COLOR_MAP[rawColor] || COLOR_MAP.slate;
+                        
+                        return boxes
+                            .filter((box: any) => box.page_index === pageIndex)
+                            .map((box: any, boxIdx: number) => {
+                                const left = (box.x0 / box.width) * 100;
+                                const top = (box.y0 / box.height) * 100;
+                                const width = ((box.x1 - box.x0) / box.width) * 100;
+                                const height = ((box.y1 - box.y0) / box.height) * 100;
+
+                                return (
+                                    <div
+                                        key={`${idx}-${boxIdx}`}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onHighlightClick(item.cpt_code);
+                                        }}
+                                        className={cn(
+                                            "absolute cursor-pointer mix-blend-multiply transition-all duration-200",
+                                            isSelected ? "ring-2 ring-offset-1 shadow-md z-10 scale-[1.02]" : "hover:opacity-80 z-0"
+                                        )}
+                                        style={{
+                                            left: `${left}%`,
+                                            top: `${top}%`,
+                                            width: `${width}%`,
+                                            height: `${height}%`,
+                                            borderRadius: '4px',
+                                            backgroundColor: colors.bg,
+                                            borderWidth: '1px',
+                                            borderStyle: 'solid',
+                                            borderColor: colors.border,
+                                            ...(isSelected ? { outlineColor: colors.border } : {})
+                                        }}
+                                    />
+                                );
+                            });
+                    })}
+                </Page>
+            </Document>
+        </div>
+    );
+};
+
+const ImageViewer = ({ imageData, highlights, selectedCpt, getHighlightStyle, getRawColor, onHighlightClick, sourceDocType }: any) => {
+    if (!imageData) return <div className="p-8 text-gray-400 italic">No Image loaded.</div>;
+
+    return (
+        <div className="relative w-full flex justify-center bg-transparent overflow-hidden mt-4">
+            <div className="relative inline-block w-full max-w-[550px]">
+                <img src={imageData} alt="Document Extract" className="w-full h-auto block rounded-sm shadow-sm" />
+                
+                {highlights.map((item: any, idx: number) => {
+                    let boxes = [];
+                    if (item.bounding_boxes && Array.isArray(item.bounding_boxes)) {
+                       if (item.source_doc && item.source_doc !== 'both' && item.source_doc !== sourceDocType) return null;
+                       boxes = item.bounding_boxes;
+                    } else if (item.bounding_boxes) {
+                       boxes = item.bounding_boxes[sourceDocType] || [];
+                    }
+
+                    if (!boxes || boxes.length === 0) return null;
+                    const isSelected = selectedCpt === item.cpt_code;
+                    const rawColor = getRawColor(item.cpt_code);
+                    const colors = COLOR_MAP[rawColor] || COLOR_MAP.slate;
+                    
+                    return boxes.map((box: any, boxIdx: number) => {
+                        if (box.page_index !== 0) return null;
+
+                        const left = (box.x0 / box.width) * 100;
+                        const top = (box.y0 / box.height) * 100;
+                        const width = ((box.x1 - box.x0) / box.width) * 100;
+                        const height = ((box.y1 - box.y0) / box.height) * 100;
+
+                        return (
+                            <div
+                                key={`${idx}-${boxIdx}`}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onHighlightClick(item.cpt_code);
+                                }}
+                                className={cn(
+                                    "absolute cursor-pointer mix-blend-multiply transition-all duration-200",
+                                    isSelected ? "ring-2 ring-offset-1 shadow-md z-10 scale-[1.02]" : "hover:opacity-80 z-0"
+                                )}
+                                style={{
+                                    left: `${left}%`,
+                                    top: `${top}%`,
+                                    width: `${width}%`,
+                                    height: `${height}%`,
+                                    borderRadius: '4px',
+                                    backgroundColor: colors.bg,
+                                    borderWidth: '1px',
+                                    borderStyle: 'solid',
+                                    borderColor: colors.border,
+                                    ...(isSelected ? { outlineColor: colors.border } : {})
+                                }}
+                            />
+                        );
+                    });
+                })}
+            </div>
+        </div>
+    );
+};
+
 export default function ResultsPage() {
+    const router = useRouter();
+    const { data: session } = useSession();
     const [selectedCpt, setSelectedCpt] = useState<string | null>(null);
     const [showAppeal, setShowAppeal] = useState(false);
     const [showSummary, setShowSummary] = useState(false);
@@ -251,9 +399,9 @@ export default function ResultsPage() {
             { }
             <header className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-slate-950 shadow-md sticky top-0 z-50">
                 <div className="flex items-center space-x-4">
-                    <Link href="/patient" className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white">
+                    <button onClick={() => router.back()} className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white">
                         <ArrowLeft className="w-5 h-5" />
-                    </Link>
+                    </button>
                     <span className="text-lg font-semibold text-white">Audit Result Review</span>
                 </div>
                 <div className="flex items-center space-x-4">
@@ -293,129 +441,179 @@ export default function ResultsPage() {
                             Discrepancies Found
                         </div>
                     )}
+                    <div className="h-6 w-px bg-white/10 mx-2" />
+                    {session && (
+                        <div className="flex items-center space-x-4">
+                            <div className="flex items-center space-x-3 bg-slate-800/50 pr-4 pl-1 py-1 rounded-full border border-white/5">
+                                {session.user?.image ? (
+                                    <img src={session.user.image} alt={session.user.name || "User"} className="w-8 h-8 rounded-full shadow-sm" />
+                                ) : (
+                                    <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold">
+                                        {session.user?.name?.charAt(0) || "U"}
+                                    </div>
+                                )}
+                                <span className="text-sm font-medium text-slate-200">{session.user?.name?.split(' ')[0]}</span>
+                            </div>
+                            <button onClick={() => signOut({ callbackUrl: '/' })} className="p-2 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors border border-white/5 shadow-sm">
+                                <LogOut className="w-4 h-4" />
+                            </button>
+                        </div>
+                    )}
                 </div>
             </header>
 
             <main className="flex-1 flex overflow-hidden relative">
                 <div className="flex-1 flex relative">
                     <div className="w-1/2 p-4 md:p-8 overflow-y-auto bg-slate-800/50 flex flex-col items-center border-r border-white/5">
-                        <div className="mb-4 flex items-center justify-between w-full max-w-4xl text-slate-400 text-sm">
-                            <span className="bg-slate-700 px-2 py-0.5 rounded text-xs">Digitized Record</span>
-                            <span>CLINICAL_NOTES</span>
+                        <div className="mb-6 flex items-center justify-start w-full max-w-4xl pl-2">
+                            <div className="inline-flex items-center space-x-2 bg-blue-500/10 border border-blue-500/20 px-3 py-1.5 rounded-lg shadow-sm">
+                                <FileText className="w-3.5 h-3.5 text-blue-400" />
+                                <span className="text-blue-300 text-xs font-semibold tracking-wide uppercase">Digitized Record</span>
+                            </div>
                         </div>
 
-                        <div className="w-full max-w-4xl min-h-[60rem] bg-white text-slate-800 shadow-2xl p-10 md:p-16 relative selection:bg-blue-100 transition-all">
-                            <div className="w-full border-b border-gray-100 pb-6 mb-8 flex justify-between items-center opacity-60">
-                                <div className="text-[10px] tracking-[0.2em] uppercase font-semibold text-gray-400">Medical Record Extract</div>
+                        <div className="w-full max-w-4xl min-h-[60rem] relative selection:bg-blue-100 transition-all">
+                            <div className="w-full border-b border-slate-700 pb-5 mb-6 flex justify-between items-center px-2">
+                                <div className="text-sm tracking-widest uppercase font-bold text-slate-200 shadow-sm">Medical Record Extract</div>
                                 <div className="flex items-center space-x-4">
-                                    {soapPdf && (
-                                        <button
-                                            onClick={() => setViewingFile('soap')}
-                                            className="flex items-center space-x-1 text-[10px] font-bold uppercase text-blue-500 hover:text-blue-600 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded transition-colors"
-                                        >
-                                            <Eye className="w-3 h-3" />
-                                            <span>View Original</span>
-                                        </button>
-                                    )}
 
                                     {auditResult.clinical_notes_pages && auditResult.clinical_notes_pages.length > 1 && (
-                                        <div className="flex items-center space-x-2 bg-slate-100 rounded-lg p-1">
+                                        <div className="flex items-center space-x-2 bg-slate-800/80 rounded-lg p-1">
                                             <button
                                                 onClick={() => setNotePage(Math.max(0, notePage - 1))}
                                                 disabled={notePage === 0}
-                                                className="p-1 hover:bg-white rounded shadow-sm disabled:opacity-50 disabled:shadow-none"
+                                                className="p-1 hover:bg-slate-700 rounded shadow-sm disabled:opacity-50 disabled:shadow-none"
                                             >
-                                                <ChevronLeft className="w-4 h-4 text-slate-500" />
+                                                <ChevronLeft className="w-4 h-4 text-slate-400" />
                                             </button>
-                                            <span className="text-[10px] font-bold text-slate-500 min-w-[3rem] text-center">
+                                            <span className="text-[10px] font-bold text-slate-400 min-w-[3rem] text-center">
                                                 {notePage + 1} / {auditResult.clinical_notes_pages.length}
                                             </span>
                                             <button
                                                 onClick={() => setNotePage(Math.min(auditResult.clinical_notes_pages.length - 1, notePage + 1))}
                                                 disabled={notePage === auditResult.clinical_notes_pages.length - 1}
-                                                className="p-1 hover:bg-white rounded shadow-sm disabled:opacity-50 disabled:shadow-none"
+                                                className="p-1 hover:bg-slate-700 rounded shadow-sm disabled:opacity-50 disabled:shadow-none"
                                             >
-                                                <ChevronRight className="w-4 h-4 text-slate-500" />
+                                                <ChevronRight className="w-4 h-4 text-slate-400" />
                                             </button>
                                         </div>
                                     )}
-                                    <div className="h-4 w-4 rounded-full bg-gray-100"></div>
+                                    <div className="h-4 w-4 rounded-full bg-slate-700"></div>
                                 </div>
                             </div>
 
-                            <HighlightableText
-                                text={
-                                    auditResult.clinical_notes_pages
-                                        ? auditResult.clinical_notes_pages[notePage]
-                                        : (auditResult.clinical_notes_text || "No clinical notes text provided.")
-                                }
-                                highlights={auditResult.flagged_items}
-                                onHighlightClick={setSelectedCpt}
-                                selectedCpt={selectedCpt}
-                                getHighlightStyle={getHighlightStyle}
-                            />
+                            {soapPdf && soapPdf.startsWith("data:application/pdf") ? (
+                                <PdfViewer 
+                                    pdfData={soapPdf}
+                                    pageIndex={notePage}
+                                    highlights={auditResult.flagged_items}
+                                    selectedCpt={selectedCpt}
+                                    getHighlightStyle={getHighlightStyle}
+                                    getRawColor={getRawColor}
+                                    onHighlightClick={setSelectedCpt}
+                                    sourceDocType="clinical_notes"
+                                />
+                            ) : soapPdf && soapPdf.startsWith("data:image/") ? (
+                                <ImageViewer 
+                                    imageData={soapPdf}
+                                    highlights={auditResult.flagged_items}
+                                    selectedCpt={selectedCpt}
+                                    getHighlightStyle={getHighlightStyle}
+                                    getRawColor={getRawColor}
+                                    onHighlightClick={setSelectedCpt}
+                                    sourceDocType="clinical_notes"
+                                />
+                            ) : (
+                                <HighlightableText
+                                    text={
+                                        auditResult.clinical_notes_pages
+                                            ? auditResult.clinical_notes_pages[notePage]
+                                            : (auditResult.clinical_notes_text || "No clinical notes text provided.")
+                                    }
+                                    highlights={auditResult.flagged_items}
+                                    onHighlightClick={setSelectedCpt}
+                                    selectedCpt={selectedCpt}
+                                    getHighlightStyle={getHighlightStyle}
+                                />
+                            )}
                         </div>
                     </div>
 
                     <div className="w-1/2 p-4 md:p-8 overflow-y-auto bg-slate-800/50 flex flex-col items-center">
-                        <div className="mb-4 flex items-center justify-between w-full max-w-4xl text-slate-400 text-sm">
-                            <span className="bg-slate-700 px-2 py-0.5 rounded text-xs">Digitized Record</span>
-                            <span>HOSPITAL_BILL</span>
+                        <div className="mb-6 flex items-center justify-start w-full max-w-4xl pl-2">
+                            <div className="inline-flex items-center space-x-2 bg-blue-500/10 border border-blue-500/20 px-3 py-1.5 rounded-lg shadow-sm">
+                                <FileText className="w-3.5 h-3.5 text-blue-400" />
+                                <span className="text-blue-300 text-xs font-semibold tracking-wide uppercase">Digitized Record</span>
+                            </div>
                         </div>
 
-                        <div className="w-full max-w-4xl min-h-[60rem] bg-white text-slate-800 shadow-2xl p-10 md:p-16 relative selection:bg-blue-100 transition-all">
-                            <div className="w-full border-b border-gray-100 pb-6 mb-8 flex justify-between items-center opacity-60">
-                                <div className="text-[10px] tracking-[0.2em] uppercase font-semibold text-gray-400">Billing Statement Extract</div>
+                        <div className="w-full max-w-4xl min-h-[60rem] relative selection:bg-blue-100 transition-all">
+                            <div className="w-full border-b border-slate-700 pb-5 mb-6 flex justify-between items-center px-2">
+                                <div className="text-sm tracking-widest uppercase font-bold text-slate-200 shadow-sm">Billing Statement Extract</div>
                                 <div className="flex items-center space-x-4">
-                                    {billPdf && (
-                                        <button
-                                            onClick={() => setViewingFile('bill')}
-                                            className="flex items-center space-x-1 text-[10px] font-bold uppercase text-blue-500 hover:text-blue-600 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded transition-colors"
-                                        >
-                                            <Eye className="w-3 h-3" />
-                                            <span>View Original</span>
-                                        </button>
-                                    )}
 
                                     {auditResult.hospital_bill_pages && auditResult.hospital_bill_pages.length > 1 && (
-                                        <div className="flex items-center space-x-2 bg-slate-100 rounded-lg p-1">
+                                        <div className="flex items-center space-x-2 bg-slate-800/80 rounded-lg p-1">
                                             <button
                                                 onClick={() => setBillPage(Math.max(0, billPage - 1))}
                                                 disabled={billPage === 0}
-                                                className="p-1 hover:bg-white rounded shadow-sm disabled:opacity-50 disabled:shadow-none"
+                                                className="p-1 hover:bg-slate-700 rounded shadow-sm disabled:opacity-50 disabled:shadow-none"
                                             >
-                                                <ChevronLeft className="w-4 h-4 text-slate-500" />
+                                                <ChevronLeft className="w-4 h-4 text-slate-400" />
                                             </button>
-                                            <span className="text-[10px] font-bold text-slate-500 min-w-[3rem] text-center">
+                                            <span className="text-[10px] font-bold text-slate-400 min-w-[3rem] text-center">
                                                 {billPage + 1} / {auditResult.hospital_bill_pages.length}
                                             </span>
                                             <button
                                                 onClick={() => setBillPage(Math.min(auditResult.hospital_bill_pages.length - 1, billPage + 1))}
                                                 disabled={billPage === auditResult.hospital_bill_pages.length - 1}
-                                                className="p-1 hover:bg-white rounded shadow-sm disabled:opacity-50 disabled:shadow-none"
+                                                className="p-1 hover:bg-slate-700 rounded shadow-sm disabled:opacity-50 disabled:shadow-none"
                                             >
-                                                <ChevronRight className="w-4 h-4 text-slate-500" />
+                                                <ChevronRight className="w-4 h-4 text-slate-400" />
                                             </button>
                                         </div>
                                     )}
-                                    <div className="h-4 w-4 rounded-full bg-gray-100"></div>
+                                    <div className="h-4 w-4 rounded-full bg-slate-700"></div>
                                 </div>
                             </div>
 
-                            <HighlightableText
-                                text={
-                                    auditResult.hospital_bill_pages
-                                        ? auditResult.hospital_bill_pages[billPage]
-                                        : (auditResult.hospital_bill_text || "No hospital bill text provided.")
-                                }
-                                highlights={auditResult.flagged_items.map((item: any) => ({
-                                    ...item,
-                                    evidence_quote: item.cpt_code
-                                }))}
-                                onHighlightClick={setSelectedCpt}
-                                selectedCpt={selectedCpt}
-                                getHighlightStyle={getHighlightStyle}
-                            />
+                            {billPdf && billPdf.startsWith("data:application/pdf") ? (
+                                <PdfViewer 
+                                    pdfData={billPdf}
+                                    pageIndex={billPage}
+                                    highlights={auditResult.flagged_items}
+                                    selectedCpt={selectedCpt}
+                                    getHighlightStyle={getHighlightStyle}
+                                    getRawColor={getRawColor}
+                                    onHighlightClick={setSelectedCpt}
+                                    sourceDocType="hospital_bill"
+                                />
+                            ) : billPdf && billPdf.startsWith("data:image/") ? (
+                                <ImageViewer 
+                                    imageData={billPdf}
+                                    highlights={auditResult.flagged_items}
+                                    selectedCpt={selectedCpt}
+                                    getHighlightStyle={getHighlightStyle}
+                                    getRawColor={getRawColor}
+                                    onHighlightClick={setSelectedCpt}
+                                    sourceDocType="hospital_bill"
+                                />
+                            ) : (
+                                <HighlightableText
+                                    text={
+                                        auditResult.hospital_bill_pages
+                                            ? auditResult.hospital_bill_pages[billPage]
+                                            : (auditResult.hospital_bill_text || "No hospital bill text provided.")
+                                    }
+                                    highlights={auditResult.flagged_items.map((item: any) => ({
+                                        ...item,
+                                        evidence_quote: item.cpt_code
+                                    }))}
+                                    onHighlightClick={setSelectedCpt}
+                                    selectedCpt={selectedCpt}
+                                    getHighlightStyle={getHighlightStyle}
+                                />
+                            )}
                         </div>
                     </div>
 

@@ -10,6 +10,7 @@ from pygments.lexers import JsonLexer
 from pygments.formatters import TerminalFormatter
 from models.schemas import LineItem, AuditResult, AppealRequest, QueryRequest
 import os
+import fitz
 
 app = FastAPI(title="ClaimShield Pro API", version="1.0.0")
 
@@ -79,6 +80,75 @@ async def audit_endpoint(
         print("\n" + "="*50)
         print("🔍 AUDIT REPORT GENERATED")
         print("="*50)
+        
+        # --- PDF BOUNDING BOX EXTRACTION ---
+        cn_doc = None
+        hb_doc = None
+        try:
+            clinical_notes.file.seek(0)
+            cn_bytes = clinical_notes.file.read()
+            if clinical_notes.content_type == "application/pdf":
+                cn_doc = fitz.open(stream=cn_bytes, filetype="pdf")
+            elif clinical_notes.content_type.startswith("image/"):
+                import pytesseract, io
+                from PIL import Image
+                pdf_bytes = pytesseract.image_to_pdf_or_hocr(Image.open(io.BytesIO(cn_bytes)), extension='pdf')
+                cn_doc = fitz.open("pdf", pdf_bytes)
+            
+            hospital_bill.file.seek(0)
+            hb_bytes = hospital_bill.file.read()
+            if hospital_bill.content_type == "application/pdf":
+                hb_doc = fitz.open(stream=hb_bytes, filetype="pdf")
+            elif hospital_bill.content_type.startswith("image/"):
+                import pytesseract, io
+                from PIL import Image
+                pdf_bytes = pytesseract.image_to_pdf_or_hocr(Image.open(io.BytesIO(hb_bytes)), extension='pdf')
+                hb_doc = fitz.open("pdf", pdf_bytes)
+            
+            for item in audit_report.get("flagged_items", []):
+                evidence = item.get("evidence_quote")
+                if not evidence:
+                    item["bounding_boxes"] = []
+                    item["source_doc"] = None
+                    continue
+
+                cn_boxes = []
+                # Check Clinical Notes
+                if cn_doc and evidence:
+                    for page_num, page in enumerate(cn_doc):
+                        rects = page.search_for(evidence)
+                        for r in rects:
+                            cn_boxes.append({
+                                "page_index": page_num,
+                                "x0": r.x0, "y0": r.y0, "x1": r.x1, "y1": r.y1,
+                                "width": page.rect.width, "height": page.rect.height
+                            })
+                        
+                # Check Hospital Bill
+                hb_boxes = []
+                cpt_code = str(item.get("cpt_code", ""))
+                if hb_doc and cpt_code:
+                    for page_num, page in enumerate(hb_doc):
+                        rects = page.search_for(cpt_code)
+                        for r in rects:
+                            hb_boxes.append({
+                                "page_index": page_num,
+                                "x0": r.x0, "y0": r.y0, "x1": r.x1, "y1": r.y1,
+                                "width": page.rect.width, "height": page.rect.height
+                            })
+                
+                item["bounding_boxes"] = {
+                    "clinical_notes": cn_boxes,
+                    "hospital_bill": hb_boxes
+                }
+                item["source_doc"] = "both"
+        except Exception as pdf_e:
+            print(f"Failed to extract bounding boxes: {str(pdf_e)}")
+        finally:
+            if cn_doc: cn_doc.close()
+            if hb_doc: hb_doc.close()
+        # -----------------------------------
+
         
         formatted_json = json.dumps(audit_report, indent=2)
         try:

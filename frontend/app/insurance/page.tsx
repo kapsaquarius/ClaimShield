@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   Building2,
   ChevronLeft,
+  ArrowLeft,
   Stethoscope,
   Activity,
   DollarSign,
@@ -14,7 +15,8 @@ import {
   TrendingUp,
   X,
   MoreVertical,
-  BarChart2
+  BarChart2,
+  LogOut
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
@@ -23,6 +25,8 @@ import {
   ScatterChart, Scatter, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer,
   BarChart, Bar, ComposedChart, CartesianGrid, ReferenceLine, Label
 } from 'recharts';
+import { useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import hospitalsData from "../hospitals_data.json";
 
 // Type definitions based on the JSON structure
@@ -54,6 +58,8 @@ const data = hospitalsData as ZipData;
 const ZIP_CODES = Object.keys(data);
 
 export default function InsurancePortal() {
+  const router = useRouter();
+  const { data: session } = useSession();
   const [selectedZip, setSelectedZip] = useState<string | null>(null);
   const [selectedHospital, setSelectedHospital] = useState<string | null>(null);
   const [selectedDoctor, setSelectedDoctor] = useState<string | null>(null);
@@ -167,14 +173,38 @@ export default function InsurancePortal() {
 
         {/* Header */}
         <header className="flex justify-between items-center py-4">
-          <Link href="/" className="flex items-center gap-2 group">
-            <ShieldCheck className="w-10 h-10 text-accent group-hover:text-accent/80 transition-colors" />
-            <span className="text-3xl font-bold text-white tracking-tight">
-              ClaimShield
-            </span>
-          </Link>
-          <div className="bg-accent/10 text-accent px-4 py-1.5 rounded-full text-sm font-medium border border-accent/20">
-            Insurance Intelligence Portal
+          <div className="flex items-center gap-6">
+            <button onClick={() => router.back()} className="p-2 bg-slate-800/50 hover:bg-slate-700 text-slate-300 rounded-full transition-colors border border-slate-700/50 flex items-center justify-center">
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <Link href="/" className="flex items-center gap-2 group">
+              <ShieldCheck className="w-10 h-10 text-accent group-hover:text-accent/80 transition-colors" />
+              <span className="text-3xl font-bold text-white tracking-tight">
+                ClaimShield
+              </span>
+            </Link>
+          </div>
+          <div className="flex items-center space-x-6">
+            <div className="bg-accent/10 text-accent px-4 py-1.5 rounded-full text-sm font-medium border border-accent/20">
+              Insurance Intelligence Portal
+            </div>
+            {session && (
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-3 bg-slate-800/50 pr-4 pl-1 py-1 rounded-full border border-white/5">
+                  {session.user?.image ? (
+                    <img src={session.user.image} alt={session.user.name || "User"} className="w-8 h-8 rounded-full shadow-sm" />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold">
+                      {session.user?.name?.charAt(0) || "U"}
+                    </div>
+                  )}
+                  <span className="text-sm font-medium text-slate-200">{session.user?.name?.split(' ')[0]}</span>
+                </div>
+                <button onClick={() => signOut({ callbackUrl: '/' })} className="p-2 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors border border-white/5 shadow-sm">
+                    <LogOut className="w-4 h-4" />
+                </button>
+              </div>
+            )}
           </div>
         </header>
 
@@ -420,7 +450,7 @@ export default function InsurancePortal() {
       {/* DOCTOR DETAIL MODAL */}
       <AnimatePresence>
         {selectedDoctor && selectedZip && selectedHospital && (
-          <motion.button
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -547,14 +577,14 @@ export default function InsurancePortal() {
                 })()}
               </div>
             </motion.div>
-          </motion.button>
+          </motion.div>
         )}
       </AnimatePresence>
 
       {/* CHART MODAL */}
       <AnimatePresence>
         {chartModalData && (
-          <motion.button
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -645,7 +675,7 @@ export default function InsurancePortal() {
                 )}
               </div>
             </motion.div>
-          </motion.button>
+          </motion.div>
         )}
       </AnimatePresence>
 
@@ -653,7 +683,7 @@ export default function InsurancePortal() {
       {/* GENERAL STATS MODAL */}
       <AnimatePresence>
         {showStatsModal && selectedZip && (
-          <motion.button
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -756,7 +786,7 @@ export default function InsurancePortal() {
                 </ResponsiveContainer>
               </div>
             </motion.div>
-          </motion.button>
+          </motion.div>
         )}
       </AnimatePresence>
     </div >

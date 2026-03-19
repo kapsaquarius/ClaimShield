@@ -1,15 +1,17 @@
 'use client';
 
 import { useState } from "react";
-import { Upload, FileText, CheckCircle, AlertCircle, Loader2, ArrowRight, Shield, ShieldCheck } from "lucide-react";
+import { Upload, FileText, CheckCircle, AlertCircle, Loader2, ArrowRight, ArrowLeft, Shield, ShieldCheck, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 export default function PatientPortal() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [soapFile, setSoapFile] = useState<File | null>(null);
   const [billFile, setBillFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -115,14 +117,38 @@ export default function PatientPortal() {
             className="w-full min-h-screen z-10 flex flex-col"
           >
             <header className="absolute top-0 left-0 w-full flex justify-between items-center p-8 z-50">
-              <Link href="/">
-                <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-10 h-10 text-accent" />
-                  <span className="text-3xl font-bold text-white tracking-tight">ClaimShield</span>
+              <div className="flex items-center gap-6">
+                <button onClick={() => router.back()} className="p-2 bg-slate-800/50 hover:bg-slate-700 text-slate-300 rounded-full transition-colors border border-slate-700/50 flex items-center justify-center shadow-md">
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+                <Link href="/">
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="w-10 h-10 text-accent" />
+                    <span className="text-3xl font-bold text-white tracking-tight">ClaimShield</span>
+                  </div>
+                </Link>
+              </div>
+              <div className="flex items-center space-x-6">
+                <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium border border-primary/20">
+                  Patient Portal
                 </div>
-              </Link>
-              <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium border border-primary/20">
-                Patient Portal
+                {session && (
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-3 bg-slate-800/50 pr-4 pl-1 py-1 rounded-full border border-white/5">
+                      {session.user?.image ? (
+                        <img src={session.user.image} alt={session.user.name || "User"} className="w-8 h-8 rounded-full shadow-sm" />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+                          {session.user?.name?.charAt(0) || "U"}
+                        </div>
+                      )}
+                      <span className="text-sm font-medium text-slate-200">{session.user?.name?.split(' ')[0]}</span>
+                    </div>
+                    <button onClick={() => signOut({ callbackUrl: '/' })} className="p-2 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors border border-white/5 shadow-sm">
+                        <LogOut className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
               </div>
             </header>
 
