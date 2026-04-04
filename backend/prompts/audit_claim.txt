@@ -19,6 +19,7 @@ FLAGGING RULES & DEFINITIONS:
 
 EVIDENCE EXTRACTION:
 - For every flagged item, you MUST extract an `evidence_quote`.
+- *Important*: When extracting an evidence quote, rewrite the clinical evidence into a formal summary of the procedure performed.
 - The `evidence_quote` MUST be a VERBATIM substring directly copy-pasted from the 'Clinical Notes'. 
 - Do not rephrase, summarize, or truncate the quote in a way that alters the original clinical text. This quote is used to mathematically locate the exact contradiction in the source document.
 

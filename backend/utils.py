@@ -3,6 +3,12 @@ from fastapi import UploadFile, HTTPException
 import fitz
 from PIL import Image
 import pytesseract
+import os
+
+# Point pytesseract to the standard Windows install location
+tesseract_cmd_path = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+if os.path.exists(tesseract_cmd_path):
+    pytesseract.pytesseract.tesseract_cmd = tesseract_cmd_path
 
 from typing import List
 
