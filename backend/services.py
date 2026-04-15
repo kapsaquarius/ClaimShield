@@ -34,25 +34,30 @@ def init_rag_system():
     except Exception as e:
         print(f"Failed to initialize RAG: {e}")
 
-def get_rag_suggested_cpt(evidence_quote: str) -> Dict[str, str]:
+def get_rag_suggested_cpt(query_text: str) -> Dict[str, str]:
     init_rag_system()
     if embedding_model is None or cpt_embeddings is None or not cpt_data_list:
         return {}
         
     try:
-        query_embedding = embedding_model.encode([evidence_quote])
+        query_embedding = embedding_model.encode([query_text])
         similarities = cosine_similarity(query_embedding, cpt_embeddings)[0]
         best_match_idx = np.argmax(similarities)
         best_score = similarities[best_match_idx]
         
         best_code, best_desc = cpt_data_list[best_match_idx]
         
-        if best_score < 0.70:
+        print(f"RAG search for query: '{query_text[:70]}...'")
+        print(f" -> Best match: {best_code} - {best_desc[:50]}... (Score: {best_score:.2f})")
+        
+        # Lowered threshold to 0.55 to be more helpful with general-purpose embeddings
+        if best_score < 0.55:
+            print(f" -> Score {best_score:.2f} is below 0.55 threshold. Ignoring.")
             return {}
             
         return {
             "suggested_code": str(best_code),
-            "suggested_code_explanation": f"RAG matched contradictory statement to CPT {best_code}: {best_desc} (Confidence: {best_score:.2f})"
+            "suggested_code_explanation": f"RAG matched the auditor's reasoning to CPT {best_code}: {best_desc} (Confidence: {best_score:.2f})"
         }
     except Exception as e:
         print(f"Error during RAG retrieval: {e}")
@@ -166,18 +171,24 @@ def audit_claim(clinical_notes_text: str, invoice_json: Dict[str, Any], official
         for item in audit_result.get("flagged_items", []):
             evidence = item.get("evidence_quote")
             error_type = item.get("error_type", "")
-            
-            # RAG suggestions only make sense for UPCODING, not Phantom Charges
-            if evidence and error_type == "UPCODING":
-                rag_suggestion = get_rag_suggested_cpt(evidence)
+
+            # RAG suggestions apply to UPCODING and UNBUNDLING:
+            # - UPCODING: find the correct lower-complexity code
+            # - UNBUNDLING: find the single comprehensive code that should replace the split codes
+            # DISCREPANCY and COMPLIANCE have no "better code" — the charge should simply be removed.
+            if evidence and error_type in ["UPCODING", "UNBUNDLING"]:
+                # Use both the provided reason and evidence for a much higher quality semantic search
+                search_query = f"{item.get('reason', '')} {evidence}"
+                rag_suggestion = get_rag_suggested_cpt(search_query)
+                
                 if rag_suggestion:
                     item["suggested_code"] = rag_suggestion["suggested_code"]
                     item["suggested_code_explanation"] = rag_suggestion["suggested_code_explanation"]
                 else:
                     item["suggested_code"] = None
                     item["suggested_code_explanation"] = "No semantically similar CPT code found for the evidence."
-            elif error_type != "UPCODING":
-                # Ensure no hallucinated codes for non-upcoding discrepancies
+            else:
+                # DISCREPANCY / COMPLIANCE — no substitute code exists
                 item["suggested_code"] = None
                 item["suggested_code_explanation"] = None
 
@@ -191,24 +202,29 @@ def _calculate_price_gouging(invoice_json: Dict[str, Any], medicare_rates: Dict[
     for item in line_items:
         cpt = item.get("cpt_code")
         amount = item.get("amount")
-        if cpt and amount:
-            cpt_str = str(cpt).strip()
-            medicare_rate = medicare_rates.get(cpt_str)
-            if medicare_rate:
-                try:
-                    val_amount = amount
-                    if isinstance(val_amount, str):
-                        val_amount = float(str(val_amount).replace("$","").replace(",",""))
-                    if medicare_rate > 0:
-                        markup = val_amount / medicare_rate
-                        gouging_details.append({
-                            "cpt_code": cpt_str,
-                            "charged_amount": val_amount,
-                            "medicare_rate": medicare_rate,
-                            "gouging_multiple": round(markup, 2)
-                        })
-                except (ValueError, TypeError):
-                    pass
+        # Guard: cpt must exist; amount must be non-None and non-zero (0.0 means the bill
+        # didn't contain a dollar figure — showing "$0.00 charged" would be misleading).
+        if not cpt:
+            continue
+        if amount is None:
+            continue
+        try:
+            val_amount = float(str(amount).replace("$", "").replace(",", "")) if isinstance(amount, str) else float(amount)
+        except (ValueError, TypeError):
+            continue
+        if val_amount <= 0:
+            continue  # No dollar data extracted — skip silently
+
+        cpt_str = str(cpt).strip()
+        medicare_rate = medicare_rates.get(cpt_str)
+        if medicare_rate and medicare_rate > 0:
+            markup = val_amount / medicare_rate
+            gouging_details.append({
+                "cpt_code": cpt_str,
+                "charged_amount": val_amount,
+                "medicare_rate": medicare_rate,
+                "gouging_multiple": round(markup, 2)
+            })
     return gouging_details
 
 def generate_appeal_letter(audit_result: Dict[str, Any], level: int) -> str:

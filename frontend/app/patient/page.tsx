@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 export default function PatientPortal() {
@@ -41,28 +40,59 @@ export default function PatientPortal() {
         throw new Error("Audit analysis failed. Please try again.");
       }
 
+      // Store audit result in localStorage (small JSON, survives refreshes)
       const result = await response.json();
       localStorage.setItem("auditResult", JSON.stringify(result));
 
-      const convertToBase64 = (file: File): Promise<string> => {
+      // For images: compress via Canvas to JPEG before storing.
+      // A raw PNG screenshot can be 2–5MB; base64 adds 33% overhead → easily blows
+      // the 5MB sessionStorage quota. Re-encoding as JPEG @75% typically shrinks it
+      // to ~150–400KB while keeping the image sharp enough for preview purposes.
+      // PDFs are stored as-is (they're already compressed internally).
+      const encodeForStorage = (file: File): Promise<string> => {
         return new Promise((resolve, reject) => {
           const reader = new FileReader();
           reader.readAsDataURL(file);
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = (error) => reject(error);
+          reader.onerror = reject;
+          reader.onload = () => {
+            const rawDataUrl = reader.result as string;
+
+            if (!file.type.startsWith("image/")) {
+              // PDF or unknown — store raw
+              return resolve(rawDataUrl);
+            }
+
+            // Compress image via Canvas
+            const img = new Image();
+            img.src = rawDataUrl;
+            img.onerror = reject;
+            img.onload = () => {
+              const MAX_W = 1600;
+              const scale = img.width > MAX_W ? MAX_W / img.width : 1;
+              const canvas = document.createElement("canvas");
+              canvas.width  = Math.round(img.width  * scale);
+              canvas.height = Math.round(img.height * scale);
+              const ctx = canvas.getContext("2d");
+              if (!ctx) return resolve(rawDataUrl); // fallback
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              resolve(canvas.toDataURL("image/jpeg", 0.75));
+            };
+          };
         });
       };
 
       try {
-        const soapBase64 = await convertToBase64(soapFile);
-        const billBase64 = await convertToBase64(billFile);
-        localStorage.setItem("uploadedSoapPdf", soapBase64);
-        localStorage.setItem("uploadedBillPdf", billBase64);
-      } catch (e) {
-        console.error("Failed to store file previews:", e);
+        sessionStorage.removeItem("uploadedSoapPdf");
+        sessionStorage.removeItem("uploadedBillPdf");
+
+        sessionStorage.setItem("uploadedSoapPdf", await encodeForStorage(soapFile));
+        sessionStorage.setItem("uploadedBillPdf", await encodeForStorage(billFile));
+      } catch (storageErr: any) {
+        console.warn("Could not store file preview:", storageErr?.message);
       }
 
       router.push("/patient/results");
+
 
     } catch (err) {
       console.error(err);
@@ -145,7 +175,7 @@ export default function PatientPortal() {
                       <span className="text-sm font-medium text-slate-200">{session.user?.name?.split(' ')[0]}</span>
                     </div>
                     <button onClick={() => signOut({ callbackUrl: '/' })} className="p-2 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors border border-white/5 shadow-sm">
-                        <LogOut className="w-4 h-4" />
+                      <LogOut className="w-4 h-4" />
                     </button>
                   </div>
                 )}

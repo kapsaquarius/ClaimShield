@@ -8,11 +8,12 @@ import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { jsPDF } from "jspdf";
-import { Document, Page, pdfjs } from 'react-pdf';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
+import dynamic from 'next/dynamic';
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+// react-pdf evaluates `new DOMMatrix()` at module load time — a browser-only API.
+// Wrapping PdfViewer with next/dynamic ssr:false means the entire pdf.js bundle
+// is only ever loaded and executed in the browser, never during SSR.
+const PdfDocumentViewer = dynamic(() => import('./PdfDocumentViewer'), { ssr: false, loading: () => <div className="p-8 text-gray-400 italic">Loading viewer…</div> });
 
 
 
@@ -39,25 +40,28 @@ const APPEAL_LEVELS = {
     }
 };
 
-const COLORS = [
-    "bg-cyan-200/50 border-cyan-500",
-    "bg-fuchsia-200/50 border-fuchsia-500",
-    "bg-emerald-200/50 border-emerald-500",
-    "bg-orange-200/50 border-orange-500",
-];
+// RGB base values for each color slot
+const HIGHLIGHT_STYLES: Record<string, { rgb: string }> = {
+    cyan:    { rgb: '6, 182, 212' },
+    fuchsia: { rgb: '217, 70, 239' },
+    emerald: { rgb: '16, 185, 129' },
+    orange:  { rgb: '249, 115, 22' },
+    slate:   { rgb: '100, 116, 139' },
+};
 
 const RAW_COLORS = [
     "cyan", "fuchsia", "emerald", "orange"
 ];
 
 const COLOR_MAP: any = {
-    cyan: { bg: 'rgba(103, 232, 249, 0.4)', border: 'rgba(6, 182, 212, 0.8)' },
-    fuchsia: { bg: 'rgba(240, 171, 252, 0.4)', border: 'rgba(217, 70, 239, 0.8)' },
-    emerald: { bg: 'rgba(110, 231, 183, 0.4)', border: 'rgba(16, 185, 129, 0.8)' },
-    orange: { bg: 'rgba(253, 186, 116, 0.4)', border: 'rgba(249, 115, 22, 0.8)' },
-    slate: { bg: 'rgba(203, 213, 225, 0.4)', border: 'rgba(100, 116, 139, 0.8)' },
+    cyan:    { bg: 'rgba(6, 182, 212, 0.28)',   border: 'rgba(6, 182, 212, 0.85)' },
+    fuchsia: { bg: 'rgba(217, 70, 239, 0.28)',  border: 'rgba(217, 70, 239, 0.85)' },
+    emerald: { bg: 'rgba(16, 185, 129, 0.28)',  border: 'rgba(16, 185, 129, 0.85)' },
+    orange:  { bg: 'rgba(249, 115, 22, 0.28)',  border: 'rgba(249, 115, 22, 0.85)' },
+    slate:   { bg: 'rgba(100, 116, 139, 0.28)', border: 'rgba(100, 116, 139, 0.85)' },
 };
 
+// findFuzzyRanges: finds ALL ranges, including overlapping ones
 const findFuzzyRanges = (fullText: string, quotes: any[]) => {
     if (!fullText) return [];
 
@@ -80,150 +84,127 @@ const findFuzzyRanges = (fullText: string, quotes: any[]) => {
         const normQuote = item.evidence_quote.toLowerCase().replace(/[^a-z0-9]/g, '');
         if (!normQuote) return;
 
-        let searchPos = 0;
-        while (true) {
-            const index = normalizedText.indexOf(normQuote, searchPos);
-            if (index === -1) break;
-            const startOrigin = normMap[index];
-            const endNormIndex = index + normQuote.length - 1;
-            const endOrigin = normMap[endNormIndex] + 1;
+        const index = normalizedText.indexOf(normQuote);
+        if (index === -1) return;
 
-            ranges.push({
-                start: startOrigin,
-                end: endOrigin,
-                highlight: item
-            });
-
-            searchPos = index + normQuote.length;
-            break;
-        }
+        const startOrigin = normMap[index];
+        const endOrigin = normMap[index + normQuote.length - 1] + 1;
+        ranges.push({ start: startOrigin, end: endOrigin, highlight: item });
     });
 
-    return ranges.sort((a, b) => a.start - b.start);
+    return ranges;
 };
 
-const HighlightableText = ({ text, highlights, onHighlightClick, selectedCpt, getHighlightStyle }: any) => {
+// Physical highlighter-marker effect.
+// Paints only the BOTTOM 52% of the element height like dragging a marker across paper.
+// Top portion stays completely clear so text is fully readable.
+// Multi-highlight: horizontal color stripes share the bottom band equally.
+const getSegmentStyle = (rgbs: string[], isSelected: boolean): React.CSSProperties => {
+    const fillH = isSelected ? '62%' : '52%';
+    const alpha = isSelected ? 0.55 : 0.38;
+    const mainRgb = rgbs[0];
+
+    let gradient: string;
+    if (rgbs.length === 1) {
+        gradient = `linear-gradient(rgba(${mainRgb}, ${alpha}), rgba(${mainRgb}, ${alpha}))`;
+    } else {
+        const n = rgbs.length;
+        const stops = rgbs.flatMap((rgb, i) => {
+            const s = ((i / n) * 100).toFixed(1);
+            const e = (((i + 1) / n) * 100).toFixed(1);
+            return [`rgba(${rgb}, ${alpha}) ${s}%`, `rgba(${rgb}, ${alpha}) ${e}%`];
+        }).join(', ');
+        gradient = `linear-gradient(to right, ${stops})`;
+    }
+
+    return {
+        borderRadius: '2px',
+        padding: '0 2px',
+        cursor: 'pointer',
+        display: 'inline',
+        fontWeight: 500,
+        backgroundImage: gradient,
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: '0 100%',
+        backgroundSize: `100% ${fillH}`,
+        WebkitBoxDecorationBreak: 'clone' as any,
+        boxDecorationBreak: 'clone' as any,
+        transition: 'box-shadow 0.15s ease, background-size 0.15s ease',
+        ...(isSelected ? { boxShadow: `0 0 0 2px rgba(${mainRgb}, 0.40)` } : {}),
+    };
+};
+
+const HighlightableText = ({ text, highlights, onHighlightClick, selectedCpt, getRawColor }: any) => {
     if (!text) return <div className="p-8 text-gray-400 italic">No text content available.</div>;
 
-    const ranges = findFuzzyRanges(text, highlights);
-    const parts: { text: string; highlight?: any }[] = [];
-    let currentCursor = 0;
+    // --- Character-level coverage map ---
+    // Each position collects every highlight that covers it.
+    const allRanges = findFuzzyRanges(text, highlights);
+    const coverage: any[][] = Array.from({ length: text.length }, () => []);
 
-    ranges.forEach(range => {
-        if (range.start < currentCursor) return;
-
-        if (range.start > currentCursor) {
-            parts.push({ text: text.slice(currentCursor, range.start) });
+    for (const range of allRanges) {
+        for (let pos = range.start; pos < range.end; pos++) {
+            if (!coverage[pos].some((h: any) => h.cpt_code === range.highlight.cpt_code)) {
+                coverage[pos].push(range.highlight);
+            }
         }
+    }
 
-        parts.push({
-            text: text.slice(range.start, range.end),
-            highlight: range.highlight
-        });
-
-        currentCursor = range.end;
-    });
-
-    if (currentCursor < text.length) {
-        parts.push({ text: text.slice(currentCursor) });
+    // --- Group chars with identical coverage into segments ---
+    const segments: { text: string; highlights: any[] }[] = [];
+    let i = 0;
+    while (i < text.length) {
+        const sig = coverage[i].map((h: any) => h.cpt_code).sort().join('\x00');
+        let j = i + 1;
+        while (j < text.length) {
+            if (coverage[j].map((h: any) => h.cpt_code).sort().join('\x00') !== sig) break;
+            j++;
+        }
+        segments.push({ text: text.slice(i, j), highlights: [...coverage[i]] });
+        i = j;
     }
 
     return (
-        <div className="whitespace-pre-wrap font-sans text-sm md:text-[15px] leading-8 text-slate-700 tracking-wide">
-            {parts.map((part, i) => {
-                if (part.highlight) {
-                    const isSelected = selectedCpt === part.highlight.cpt_code;
-                    const style = getHighlightStyle(part.highlight.cpt_code);
-                    return (
-                        <span
-                            key={i}
-                            className={cn(
-                                "px-1.5 py-0.5 rounded transition-all duration-200 cursor-pointer font-medium",
-                                style,
-                                isSelected ? "ring-2 ring-offset-2 ring-blue-500 shadow-sm transform scale-[1.02]" : "hover:bg-opacity-80"
-                            )}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onHighlightClick(part.highlight.cpt_code);
-                            }}
-                        >
-                            {part.text}
-                        </span>
-                    );
+        <div className="whitespace-pre-wrap font-sans text-sm md:text-[15px] leading-[2rem] text-slate-700 tracking-wide">
+            {segments.map((seg, idx) => {
+                if (seg.highlights.length === 0) {
+                    return <span key={idx}>{seg.text}</span>;
                 }
-                return <span key={i}>{part.text}</span>;
+
+                const isSelected = seg.highlights.some((h: any) => h.cpt_code === selectedCpt);
+                const rgbs = seg.highlights.map(
+                    (h: any) => (HIGHLIGHT_STYLES[getRawColor(h.cpt_code)] || HIGHLIGHT_STYLES.slate).rgb
+                );
+                const style = getSegmentStyle(rgbs, isSelected);
+
+                const handleClick = (e: React.MouseEvent) => {
+                    e.stopPropagation();
+                    if (seg.highlights.length === 1) {
+                        onHighlightClick(seg.highlights[0].cpt_code);
+                    } else {
+                        // Cycle through the covered highlights on each click
+                        const currentIdx = seg.highlights.findIndex(
+                            (h: any) => h.cpt_code === selectedCpt
+                        );
+                        const nextIdx = (currentIdx + 1) % seg.highlights.length;
+                        onHighlightClick(seg.highlights[nextIdx].cpt_code);
+                    }
+                };
+
+                return (
+                    <span key={idx} style={style} onClick={handleClick} title={
+                        seg.highlights.length > 1
+                            ? `${seg.highlights.length} flags: ${seg.highlights.map((h: any) => h.cpt_code).join(', ')} — click to cycle`
+                            : seg.highlights[0].cpt_code
+                    }>
+                        {seg.text}
+                    </span>
+                );
             })}
         </div>
     );
 };
 
-const PdfViewer = ({ pdfData, pageIndex, highlights, selectedCpt, getHighlightStyle, getRawColor, onHighlightClick, sourceDocType }: any) => {
-    if (!pdfData) return <div className="p-8 text-gray-400 italic">No PDF document loaded.</div>;
-
-    return (
-        <div className="relative w-full flex justify-center bg-transparent overflow-hidden">
-            <Document file={pdfData} className="flex justify-center flex-col items-center">
-                <Page
-                    pageNumber={pageIndex + 1}
-                    renderTextLayer={false}
-                    renderAnnotationLayer={false}
-                    width={550}
-                    className="relative"
-                >
-                    {highlights.map((item: any, idx: number) => {
-                        let boxes = [];
-                        if (item.bounding_boxes && Array.isArray(item.bounding_boxes)) {
-                           if (item.source_doc && item.source_doc !== 'both' && item.source_doc !== sourceDocType) return null;
-                           boxes = item.bounding_boxes;
-                        } else if (item.bounding_boxes) {
-                           boxes = item.bounding_boxes[sourceDocType] || [];
-                        }
-
-                        if (!boxes || boxes.length === 0) return null;
-                        const isSelected = selectedCpt === item.cpt_code;
-                        const rawColor = getRawColor(item.cpt_code);
-                        const colors = COLOR_MAP[rawColor] || COLOR_MAP.slate;
-                        
-                        return boxes
-                            .filter((box: any) => box.page_index === pageIndex)
-                            .map((box: any, boxIdx: number) => {
-                                const left = (box.x0 / box.width) * 100;
-                                const top = (box.y0 / box.height) * 100;
-                                const width = ((box.x1 - box.x0) / box.width) * 100;
-                                const height = ((box.y1 - box.y0) / box.height) * 100;
-
-                                return (
-                                    <div
-                                        key={`${idx}-${boxIdx}`}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            onHighlightClick(item.cpt_code);
-                                        }}
-                                        className={cn(
-                                            "absolute cursor-pointer mix-blend-multiply transition-all duration-200",
-                                            isSelected ? "ring-2 ring-offset-1 shadow-md z-10 scale-[1.02]" : "hover:opacity-80 z-0"
-                                        )}
-                                        style={{
-                                            left: `${left}%`,
-                                            top: `${top}%`,
-                                            width: `${width}%`,
-                                            height: `${height}%`,
-                                            borderRadius: '4px',
-                                            backgroundColor: colors.bg,
-                                            borderWidth: '1px',
-                                            borderStyle: 'solid',
-                                            borderColor: colors.border,
-                                            ...(isSelected ? { outlineColor: colors.border } : {})
-                                        }}
-                                    />
-                                );
-                            });
-                    })}
-                </Page>
-            </Document>
-        </div>
-    );
-};
 
 const ImageViewer = ({ imageData, highlights, selectedCpt, getHighlightStyle, getRawColor, onHighlightClick, sourceDocType }: any) => {
     if (!imageData) return <div className="p-8 text-gray-400 italic">No Image loaded.</div>;
@@ -263,20 +244,25 @@ const ImageViewer = ({ imageData, highlights, selectedCpt, getHighlightStyle, ge
                                     onHighlightClick(item.cpt_code);
                                 }}
                                 className={cn(
-                                    "absolute cursor-pointer mix-blend-multiply transition-all duration-200",
-                                    isSelected ? "ring-2 ring-offset-1 shadow-md z-10 scale-[1.02]" : "hover:opacity-80 z-0"
+                                    "absolute cursor-pointer transition-all duration-200",
+                                    isSelected ? "z-10" : "z-0"
                                 )}
+                                title={item.cpt_code}
                                 style={{
                                     left: `${left}%`,
                                     top: `${top}%`,
                                     width: `${width}%`,
                                     height: `${height}%`,
-                                    borderRadius: '4px',
-                                    backgroundColor: colors.bg,
-                                    borderWidth: '1px',
+                                    borderRadius: '3px',
+                                    backgroundColor: isSelected
+                                        ? colors.bg.replace(/[\d.]+\)$/, '0.45)')
+                                        : colors.bg,
+                                    borderWidth: isSelected ? '2px' : '1.5px',
                                     borderStyle: 'solid',
                                     borderColor: colors.border,
-                                    ...(isSelected ? { outlineColor: colors.border } : {})
+                                    ...(isSelected ? {
+                                        boxShadow: `0 0 0 3px ${colors.border.replace(/[\d.]+\)$/, '0.30)')}`,
+                                    } : {})
                                 }}
                             />
                         );
@@ -315,8 +301,9 @@ export default function ResultsPage() {
                 console.error("Failed to parse stored audit result:", error);
             }
         }
-        setSoapPdf(localStorage.getItem("uploadedSoapPdf"));
-        setBillPdf(localStorage.getItem("uploadedBillPdf"));
+        // File previews are stored in sessionStorage (no quota limit vs localStorage's 5MB)
+        setSoapPdf(sessionStorage.getItem("uploadedSoapPdf"));
+        setBillPdf(sessionStorage.getItem("uploadedBillPdf"));
     }, []);
 
     const handleGenerateAppeal = async () => {
@@ -503,15 +490,15 @@ export default function ResultsPage() {
                             </div>
 
                             {soapPdf && soapPdf.startsWith("data:application/pdf") ? (
-                                <PdfViewer 
+                                <PdfDocumentViewer
                                     pdfData={soapPdf}
                                     pageIndex={notePage}
                                     highlights={auditResult.flagged_items}
                                     selectedCpt={selectedCpt}
-                                    getHighlightStyle={getHighlightStyle}
                                     getRawColor={getRawColor}
                                     onHighlightClick={setSelectedCpt}
                                     sourceDocType="clinical_notes"
+                                    colorMap={COLOR_MAP}
                                 />
                             ) : soapPdf && soapPdf.startsWith("data:image/") ? (
                                 <ImageViewer 
@@ -533,7 +520,7 @@ export default function ResultsPage() {
                                     highlights={auditResult.flagged_items}
                                     onHighlightClick={setSelectedCpt}
                                     selectedCpt={selectedCpt}
-                                    getHighlightStyle={getHighlightStyle}
+                                    getRawColor={getRawColor}
                                 />
                             )}
                         </div>
@@ -578,15 +565,15 @@ export default function ResultsPage() {
                             </div>
 
                             {billPdf && billPdf.startsWith("data:application/pdf") ? (
-                                <PdfViewer 
+                                <PdfDocumentViewer
                                     pdfData={billPdf}
                                     pageIndex={billPage}
                                     highlights={auditResult.flagged_items}
                                     selectedCpt={selectedCpt}
-                                    getHighlightStyle={getHighlightStyle}
                                     getRawColor={getRawColor}
                                     onHighlightClick={setSelectedCpt}
                                     sourceDocType="hospital_bill"
+                                    colorMap={COLOR_MAP}
                                 />
                             ) : billPdf && billPdf.startsWith("data:image/") ? (
                                 <ImageViewer 
@@ -611,7 +598,7 @@ export default function ResultsPage() {
                                     }))}
                                     onHighlightClick={setSelectedCpt}
                                     selectedCpt={selectedCpt}
-                                    getHighlightStyle={getHighlightStyle}
+                                    getRawColor={getRawColor}
                                 />
                             )}
                         </div>
